@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Delete } from '@nestjs/common';
 import { OrderitemService } from './orderitem.service';
 import { createOrderItemDto } from './dto/create-orderitem.dto';
 
@@ -8,5 +8,17 @@ export class OrderitemController {
   @Post('create')
   createOrderItem(@Body() data: createOrderItemDto) {
     return this.orderItemService.createOrderItem(data);
+  }
+  @Get('id/:id')
+  getOrderItemById(@Param('id') id: string) {
+    return this.orderItemService.getOrderItemById(id);
+  }
+  @Get('orderitems')
+  getorderItems() {
+    return this.orderItemService.getOrderItems();
+  }
+  @Delete(':id')
+  deleteOrderItemById(@Param('id') id: string) {
+    return this.orderItemService.deleteOrderItemById(id);
   }
 }
