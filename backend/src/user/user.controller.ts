@@ -1,25 +1,33 @@
-import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { createUserDto } from './dto/create-user.dto';
-
-@Controller('user')
+import { CreateUserDto } from './dto/create-user.dto';
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Post('create')
-  create(@Body() dto: createUserDto) {
-    console.log(dto);
-    return this.userService.createUser(dto);
+  @Post()
+  create(@Body() data: CreateUserDto) {
+    return this.userService.createUser(data);
   }
-  @Get('users')
-  getusers() {
-    return this.userService.getusers();
+  @Get()
+  getAll() {
+    return this.userService.getUsers();
   }
-  @Post('user/:id')
-  getUserById(@Param('id') id: string) {
-    return this.userService.getUserById(id);
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    const user = await this.userService.getUserById(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
-  @Delete('delete/:id')
-  DeleteUser(@Param('id') id: string) {
-    return this.userService.DeleteUser(id);
+  @Delete(':id')
+  Delete(@Param('id') id: string) {
+    return this.userService.deleteUser(id);
   }
 }

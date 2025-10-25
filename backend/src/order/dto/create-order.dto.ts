@@ -1,6 +1,6 @@
 import { IsNumber } from 'class-validator';
 
-export class createOrderDto {
+export class CreateOrderDto {
   @IsNumber()
   userId: number;
   total: number;
