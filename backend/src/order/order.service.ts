@@ -5,8 +5,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 @Injectable()
 export class OrderService {
   constructor(private readonly prisma: PrismaService) {}
-  async createOrder(data: CreateOrderDto) {
-    const Order = await this.prisma.order.create({ data });
+  async createOrder(data: CreateOrderDto, userId: number) {
+    const Order = await this.prisma.order.create({ data: { ...data, userId } });
     return Order;
   }
   async getOrderById(id: string) {
