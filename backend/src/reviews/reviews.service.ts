@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createReviewDto } from './dto/create-review.dto';
 
@@ -10,5 +14,14 @@ export class ReviewsService {
       data: { ...data, userId },
     });
     return review;
+  }
+  async delete(id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID forn=mat not found');
+    const review = await this.prisma.review.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!review) throw new NotFoundException('review not found');
+    await this.prisma.review.delete({ where: { id: parseInt(id) } });
   }
 }
