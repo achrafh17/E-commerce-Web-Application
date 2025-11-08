@@ -53,8 +53,7 @@ export class UserController {
       description: `User ${req.user.id} deleted user ${id} `,
       ipAddress: 'this is an ip address',
     });
-    
-    console.log(req.user);
+
     return this.userService.deleteUser(id);
   }
 }

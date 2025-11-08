@@ -60,6 +60,10 @@ export class UserService {
         where: { ownerId: parseInt(id) },
         data: { deletedAt: new Date(), status: 'deleted' },
       });
+      // await tx.review.create({
+      //   where: { userId: parseInt(id) },
+      //   data: { deletedAt: new Date() },
+      // });
     });
   }
 }
