@@ -20,7 +20,7 @@ export class AuthService {
     if (!isMatch)
       return this.Response('Mail or password incorect', 'error', 401);
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const token = await this.JwtService.signAsync(payload);
     const { password, ...userWithoutPassord } = user;
     return this.Response(

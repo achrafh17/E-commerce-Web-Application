@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
@@ -10,6 +14,8 @@ export class OrderService {
     return Order;
   }
   async getOrderById(id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID format not found');
     const order = await this.prisma.order.findUnique({
       where: {
         id: parseInt(id),
@@ -35,5 +41,24 @@ export class OrderService {
       },
     });
     return order;
+  }
+
+  //get the orders that user order
+  //id: user id
+  async getUserOrders(id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID format not found');
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    const orders = await this.prisma.order.findMany({
+      where: {
+        userId: parseInt(id),
+      },
+    });
+    return orders;
   }
 }

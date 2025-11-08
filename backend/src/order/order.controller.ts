@@ -11,15 +11,25 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { LogsService } from 'src/logs/logs.service';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly logsService: LogsService,
+  ) {}
   @UseGuards(JwtAuthGuard)
   @Post()
-  Create(@Body() dto: CreateOrderDto, @Req() req) {
-    console.log('test', req.user);
-    return this.orderService.createOrder(dto, req.user.id);
+  async Create(@Body() dto: CreateOrderDto, @Req() req) {
+    const createdOrder = await this.orderService.createOrder(dto, req.user.id);
+    await this.logsService.createLog({
+      userId: req.user.id,
+      action: 'Create Order',
+      description: `User ${req.user.id} created Order N-${createdOrder.id}`,
+      ipAddress: 'this is an ip address',
+    });
+    return createdOrder;
   }
   @Get(':id')
   getById(@Param('id') id: string) {
@@ -29,8 +39,19 @@ export class OrderController {
   getAll() {
     return this.orderService.getOrders();
   }
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string, @Req() req) {
+    await this.logsService.createLog({
+      userId: req.user.id,
+      action: 'Create Order',
+      description: `User ${req.user.id} Deleted  Order N-${id}`,
+      ipAddress: 'this is an ip address',
+    });
     return this.orderService.deleteOrder(id);
+  }
+  @Get('users/:id')
+  async getUserOrders(@Param('id') id: string) {
+    return await this.orderService.getUserOrders(id);
   }
 }

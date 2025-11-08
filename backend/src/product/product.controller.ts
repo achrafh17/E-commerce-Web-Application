@@ -1,24 +1,61 @@
-import { Controller, Post, Body, Param, Get, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Get,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { LogsService } from 'src/logs/logs.service';
 
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly LogsService: LogsService,
+  ) {}
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateProductDto) {
-    return this.productService.createProduct(dto);
+  async create(@Body() data: CreateProductDto, @Req() req) {
+    const product = await this.productService.createProduct(data, req.user.id);
+    await this.LogsService.createLog({
+      userId: req.user.id,
+      action: 'Create Order',
+      description: `User ${req.user.id} delete Order N-${product.id}`,
+      ipAddress: 'this is an ip address',
+    });
+    return product;
   }
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.productService.getProduct(id);
   }
-  @Delete('delete/:id')
-  delete(@Param('id') id: string) {
-    return this.productService.deleteProduct(id);
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async delete(@Param('id') ids: string, @Req() req) {
+    await this.LogsService.createLog({
+      userId: req.user.id,
+      action: 'Delete Order',
+      description: `User ${req.user.id} delete Order N- ${ids}`,
+      ipAddress: 'this is an ip address',
+    });
+    return this.productService.deleteProduct(ids);
   }
-  @Get('getProducts')
+
+  @Get()
   getAll() {
     return this.productService.getProducts();
+  }
+
+  @Get('/user/:id')
+  products(@Param('id') id: string) {
+    return this.productService.getUserProducts(id);
   }
 }

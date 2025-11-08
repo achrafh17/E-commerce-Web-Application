@@ -9,7 +9,6 @@ import { CreateOrderItemDto } from './dto/create-orderitem.dto';
 @Injectable()
 export class OrderitemService {
   constructor(private readonly prisma: PrismaService) {}
-  //crate orderItemsk
   async createOrderItem(data: CreateOrderItemDto) {
     const orderItem = await this.prisma.orderItem.create({
       data,
