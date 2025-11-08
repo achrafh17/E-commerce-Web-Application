@@ -60,10 +60,13 @@ export class UserService {
         where: { ownerId: parseInt(id) },
         data: { deletedAt: new Date(), status: 'deleted' },
       });
-      // await tx.review.create({
-      //   where: { userId: parseInt(id) },
-      //   data: { deletedAt: new Date() },
-      // });
+      await tx.review.updateMany({
+        where: { userId: parseInt(id) },
+        data: { deletedAt: new Date() },
+      });
+      await tx.cart.delete({
+        where: { userId: parseInt(id) },
+      });
     });
   }
 }
