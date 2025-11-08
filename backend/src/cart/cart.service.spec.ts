@@ -12,7 +12,7 @@ describe('CartService', () => {
     service = module.get<CartService>(CartService);
   });
 
-  it('should be defined', () => {
+  it('should be =', () => {
     expect(service).toBeDefined();
   });
 });
