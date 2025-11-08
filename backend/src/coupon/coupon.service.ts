@@ -11,4 +11,11 @@ export class CouponService {
     });
     return coupon;
   }
+
+  async delete(id: string) {
+    const coupon = await this.prisma.coupon.delete({
+      where: { id: parseInt(id) },
+    });
+    return coupon;
+  }
 }
