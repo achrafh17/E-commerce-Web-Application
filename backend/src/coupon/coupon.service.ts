@@ -9,7 +9,7 @@ import { createCouponDto } from './dto/create-coupon.dto';
 @Injectable()
 export class CouponService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: createCouponDto, userId: string) {
+  async create(data: createCouponDto, userId: number) {
     const coupon = await this.prisma.coupon.create({
       data: { ...data, userId },
     });

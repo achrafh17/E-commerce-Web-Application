@@ -34,6 +34,7 @@ model User {
   reviews    Review[]
   carts      cart[]
   adresses   Adress[]
+  coupons    Coupon[]
 }
 
 enum ProductStatus {
@@ -46,7 +47,7 @@ model Product {
   id          Int           @id @default(autoincrement())
   title       String
   description String?
-  price       Decimal
+  price       Float
   reference   String?
   imageUrl    String?
   stock       Int           @default(0)
@@ -75,8 +76,8 @@ model Order {
   userId         Int
   user           User        @relation(fields: [userId], references: [id])
   items          OrderItem[]
-  total          Decimal
-  shippingAmount Decimal     @default(0)
+  total          Float
+  shippingAmount Float     @default(0)
   status         OrderStatus @default(PENDING)
   couponId       Int?
   coupon         Coupon?     @relation(fields: [couponId], references: [id])
@@ -150,10 +151,12 @@ model Review {
 model Coupon {
   id            Int       @id @default(autoincrement())
   code          String    @unique
-  discountValue Decimal
-  minAmount     Decimal?
+  discountValue Float
+  minAmount     Float?
   maxUses       Int?
   usedCount     Int       @default(0)
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
   validFrom     DateTime?
   validUntil    DateTime?
   isActive      Boolean   @default(false)

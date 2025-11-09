@@ -9,10 +9,12 @@ import { createCartDto } from './dto/create-cart.dto';
 @Injectable()
 export class CartService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: createCartDto, userId: string) {
+
+  async create(data: createCartDto, userId: number) {
     const cart = await this.prisma.cart.create({ data: { ...data, userId } });
     return cart;
   }
+
   async update(data: createCartDto, userId: string, id: string) {
     if (!isNaN(parseInt(userId)))
       throw new BadRequestException('ID format not found');
@@ -23,6 +25,7 @@ export class CartService {
       data: data,
     });
   }
+
   async delete(id: string) {
     if (!isNaN(parseInt(id)))
       throw new BadRequestException('ID format not found');

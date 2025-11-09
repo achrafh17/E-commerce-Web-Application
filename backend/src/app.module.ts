@@ -21,6 +21,7 @@ import { CouponModule } from './coupon/coupon.module';
 import { CartController } from './cart/cart.controller';
 import { CartService } from './cart/cart.service';
 import { CartModule } from './cart/cart.module';
+import { CartItemModule } from './cart-item/cart-item.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CartModule } from './cart/cart.module';
     ReviewsModule,
     CouponModule,
     CartModule,
+    CartItemModule,
   ],
   controllers: [AppController, ProductController, OrderController, CouponController, CartController],
   providers: [

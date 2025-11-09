@@ -5,4 +5,5 @@ export class createReviewDto {
   comment: string;
   @IsNumber()
   rating: number;
+  productId: number;
 }
