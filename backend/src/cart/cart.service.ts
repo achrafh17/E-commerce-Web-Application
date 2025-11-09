@@ -34,5 +34,6 @@ export class CartService {
     });
     if (!cartCheck) throw new NotFoundException('cart not found');
     await this.prisma.cart.delete({ where: { id: parseInt(id) } });
+    return cartCheck;
   }
 }
