@@ -8,6 +8,7 @@ import {
   NotFoundException,
   UseGuards,
   Req,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -55,5 +56,19 @@ export class UserController {
     });
 
     return this.userService.deleteUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  async update(@Body() data: any, @Param('id') id: string, @Req() req) {
+    const user = await this.userService.getUserById(id);
+    // if (!user) throw new NotFoundException('user not');
+    await this.LogsService.createLog({
+      userId: req.user.id,
+      action: 'User updated',
+      description: `User ${id} has been updated`,
+      ipAddress: 'this is an ip address',
+    });
+    return this.userService.update(data, id);
   }
 }

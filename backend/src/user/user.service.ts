@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -36,6 +37,19 @@ export class UserService {
       where: { id: parseInt(id, 10) },
     });
     if (!user) throw new NotFoundException('user not found');
+    return user;
+  }
+  async update(updateData: any, id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadGatewayException('ID format not found');
+    const userCheck = await this.prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!userCheck) throw new NotFoundException('user not found');
+    const user = await this.prisma.user.update({
+      where: { id: parseInt(id) },
+      data: updateData,
+    });
     return user;
   }
   async deleteUser(id: string): Promise<void> {
