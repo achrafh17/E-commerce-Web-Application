@@ -52,6 +52,14 @@ export class UserService {
     });
     return user;
   }
+  async updatePassword(password: string, id: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.prisma.user.update({
+      where: { id: parseInt(id) },
+      data: { password: hashedPassword },
+    });
+    return user;
+  }
   async deleteUser(id: string): Promise<void> {
     if (isNaN(parseInt(id)))
       throw new BadRequestException('ID format not found');

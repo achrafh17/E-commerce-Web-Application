@@ -62,7 +62,7 @@ export class UserController {
   @Patch(':id')
   async update(@Body() data: any, @Param('id') id: string, @Req() req) {
     const user = await this.userService.getUserById(id);
-    // if (!user) throw new NotFoundException('user not');
+    if (!user) throw new NotFoundException('user not found');
     await this.LogsService.createLog({
       userId: req.user.id,
       action: 'User updated',
@@ -70,5 +70,11 @@ export class UserController {
       ipAddress: 'this is an ip address',
     });
     return this.userService.update(data, id);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/changePassword')
+  async updatePassword(@Body() data: any, @Param('id') id: string) {
+    const user = await this.userService.updatePassword(data.password, id);
+    return user;
   }
 }
