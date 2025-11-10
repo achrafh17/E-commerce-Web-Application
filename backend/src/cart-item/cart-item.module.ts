@@ -8,6 +8,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [AuthModule, PrismaModule],
   controllers: [CartItemController],
   providers: [CartItemService],
-  exports: [CartItemModule],
+  exports: [CartItemService],
 })
 export class CartItemModule {}

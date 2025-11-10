@@ -12,12 +12,14 @@ import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { createCartDto } from './dto/create-cart.dto';
 import { LogsService } from 'src/logs/logs.service';
+import { CartItemService } from 'src/cart-item/cart-item.service';
 
 @Controller('cart')
 export class CartController {
   constructor(
     private readonly cartService: CartService,
     private readonly logsSerive: LogsService,
+    private readonly cartItemService: CartItemService,
   ) {}
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -30,6 +32,7 @@ export class CartController {
       ipAddress: 'this is an ip address',
     });
   }
+
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id') id: string, @Req() req) {
@@ -41,14 +44,9 @@ export class CartController {
       ipAddress: 'this is an ip address',
     });
   }
-  @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() data: createCartDto,
-    @Req() req,
-  ) {
-    const cart = await this.cartService.update(data, req.user.id, id);
-    return cart;
+  @Delete('cartItem/:id')
+  async deleteCartItem(@Param('id') id: string) {
+    const cartItem = await this.cartItemService.delete(id);
+    return cartItem;
   }
 }

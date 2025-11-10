@@ -7,11 +7,13 @@ import {
   Delete,
   UseGuards,
   Req,
+  Patch,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('products')
 export class ProductController {
@@ -57,5 +59,24 @@ export class ProductController {
   @Get('/user/:id')
   products(@Param('id') id: string) {
     return this.productService.getUserProducts(id);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
+  @Patch(':id/status/:status')
+  async disactivateProduct(
+    @Param('id') id: string,
+    @Param('status') status: string,
+    @Req() req,
+  ) {
+    const product = await this.productService.changeStatus(id, {
+      status: status,
+    });
+    await this.LogsService.createLog({
+      userId: req.user.id,
+      action: `${status} Product`,
+      description: `User ${req.user.id} ${status} product N- ${id}`,
+      ipAddress: 'this is an ip address',
+    });
+    return product;
   }
 }

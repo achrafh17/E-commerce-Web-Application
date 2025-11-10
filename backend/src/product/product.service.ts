@@ -66,4 +66,18 @@ export class ProductService {
     });
     return products;
   }
+  async changeStatus(id: string, data: any) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID format not found');
+    const productCheck = await this.prisma.product.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    const product = await this.prisma.product.update({
+      where: { id: parseInt(id) },
+      data,
+    });
+    return product;
+  }
 }

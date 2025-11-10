@@ -10,9 +10,5 @@ export class CartItemController {
     const cartItem = await this.cartItemService.create(data);
     return cartItem;
   }
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    const cartItem = await this.cartItemService.delete(id);
-    return cartItem;
-  }
+ 
 }

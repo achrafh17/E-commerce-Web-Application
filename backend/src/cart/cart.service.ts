@@ -15,16 +15,7 @@ export class CartService {
     return cart;
   }
 
-  async update(data: createCartDto, userId: string, id: string) {
-    if (!isNaN(parseInt(userId)))
-      throw new BadRequestException('ID format not found');
-    if (!isNaN(parseInt(id)))
-      throw new BadRequestException('ID format not found');
-    const cartCheck = await this.prisma.cart.update({
-      where: { id: parseInt(id) },
-      data: data,
-    });
-  }
+ 
 
   async delete(id: string) {
     if (!isNaN(parseInt(id)))
