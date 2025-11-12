@@ -79,4 +79,15 @@ export class ProductController {
     });
     return product;
   }
+  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  async update(@Body() data: any, @Param('id') id: string) {
+    try {
+      const product = await this.productService.update(data, id);
+      return product;
+    } catch (e) {
+      return e;
+    }
+  }
 }
