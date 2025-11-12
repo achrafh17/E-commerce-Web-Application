@@ -10,6 +10,7 @@ import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { NotFoundError } from 'rxjs';
 import { text } from 'stream/consumers';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,7 @@ export class UserService {
       data: {
         ...data,
         password: hashedPassword,
+        role: Role.user,
       },
     });
     const { password, ...result } = user;
@@ -90,5 +92,26 @@ export class UserService {
         where: { userId: parseInt(id) },
       });
     });
+  }
+  async assignRole(role: Role, id: string) {
+    if (role === 'admin') {
+      const user = await this.prisma.user.update({
+        where: { id: parseInt(id) },
+        data: { role: 'admin' },
+      });
+      return user;
+    } else if (role === 'user') {
+      const user = await this.prisma.user.update({
+        where: { id: parseInt(id) },
+        data: { role: 'user' },
+      });
+      return user;
+    } else if (role === 'guest') {
+      const user = await this.prisma.user.update({
+        where: { id: parseInt(id) },
+        data: { role: 'guest' },
+      });
+      return user;
+    } else throw new BadRequestException('role format not found');
   }
 }

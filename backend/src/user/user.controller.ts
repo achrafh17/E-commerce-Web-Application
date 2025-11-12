@@ -17,6 +17,7 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { RolesGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { Role } from '@prisma/client';
 @Controller('users')
 export class UserController {
   constructor(
@@ -75,6 +76,13 @@ export class UserController {
   @Patch(':id/changePassword')
   async updatePassword(@Body() data: any, @Param('id') id: string) {
     const user = await this.userService.updatePassword(data.password, id);
+    return user;
+  }
+  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/assignRole')
+  async assignRole(@Body('role') role: Role, @Param('id') id: string) {
+    const user = await this.userService.assignRole(role, id);
     return user;
   }
 }
