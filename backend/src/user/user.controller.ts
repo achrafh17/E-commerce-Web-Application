@@ -85,4 +85,10 @@ export class UserController {
     const user = await this.userService.assignRole(role, id);
     return user;
   }
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/cart')
+  async getCart(@Param('id') id: string) {
+    const cart = await this.userService.getCart(id);
+    return cart;
+  }
 }

@@ -114,4 +114,14 @@ export class UserService {
       return user;
     } else throw new BadRequestException('role format not found');
   }
+
+  async getCart(id: string) {
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId: parseInt(id) },
+    });
+    const cartItems = await this.prisma.cartItem.findMany({
+      where: { cartId: cart?.id },
+    });
+    return cartItems;
+  }
 }
