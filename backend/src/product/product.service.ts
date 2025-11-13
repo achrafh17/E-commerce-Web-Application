@@ -94,4 +94,16 @@ export class ProductService {
     });
     return product;
   }
+  async getReviews(id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID format not found');
+    const product = await this.prisma.product.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!product) throw new NotFoundException('product not found');
+    const reviews = await this.prisma.review.findMany({
+      where: { productId: parseInt(id) },
+    });
+    return reviews;
+  }
 }
