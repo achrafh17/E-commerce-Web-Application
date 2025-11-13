@@ -8,7 +8,6 @@ export enum OrderStatus {
 }
 export class CreateOrderDto {
   @IsNumber()
-  @IsOptional()
   total: number;
   @IsEnum(OrderStatus)
   @IsOptional()

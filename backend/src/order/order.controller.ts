@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
 import { createCartDto } from 'src/cart/dto/create-cart.dto';
 import { OrderStatus } from '@prisma/client';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('orders')
 export class OrderController {
@@ -38,6 +39,9 @@ export class OrderController {
   getById(@Param('id') id: string) {
     return this.orderService.getOrderById(id);
   }
+
+  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll() {
     return this.orderService.getOrders();
