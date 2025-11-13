@@ -15,6 +15,20 @@ export class ReviewsService {
     });
     return review;
   }
+
+  async update(data: any, id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID forn=mat not found');
+    const reviewCheck = await this.prisma.review.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!reviewCheck) throw new NotFoundException('review not found');
+    const review = await this.prisma.review.update({
+      where: { id: parseInt(id) },
+      data: data,
+    });
+    return review;
+  }
   async delete(id: string) {
     if (isNaN(parseInt(id)))
       throw new BadRequestException('ID forn=mat not found');

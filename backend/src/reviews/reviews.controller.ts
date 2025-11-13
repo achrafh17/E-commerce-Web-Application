@@ -6,6 +6,7 @@ import {
   Body,
   Delete,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { createReviewDto } from './dto/create-review.dto';
@@ -25,6 +26,13 @@ export class ReviewsController {
   @Delete(':id')
   async Delete(@Param('id') id: string) {
     const review = await this.Delete(id);
+    return review;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  async update(@Body() data, @Param('id') id: string) {
+    const review = await this.reviewService.update(data, id);
     return review;
   }
 }
