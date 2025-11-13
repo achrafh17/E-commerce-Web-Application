@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createCartItemDto } from './dto/create-cartItem.dto';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class CartItemService {
@@ -25,6 +24,19 @@ export class CartItemService {
       throw new BadRequestException('ID format not found');
     const cartItem = await this.prisma.cartItem.delete({
       where: { id: parseInt(id) },
+    });
+    return cartItem;
+  }
+  async itemQuantity(quantity: number, id: string) {
+    if (isNaN(parseInt(id)))
+      throw new BadRequestException('ID format not found');
+    const cartItemCheck = await this.prisma.cartItem.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!cartItemCheck) throw new NotFoundException('cart item not found');
+    const cartItem = await this.prisma.cartItem.update({
+      where: { id: parseInt(id) },
+      data: { quantity: quantity },
     });
     return cartItem;
   }
