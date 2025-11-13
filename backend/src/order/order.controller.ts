@@ -61,13 +61,19 @@ export class OrderController {
   async getUserOrders(@Param('id') id: string) {
     return await this.orderService.getUserOrders(id);
   }
-
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async status(@Body() data: any, @Param('id') id: string) {
+  async status(@Body() data: any, @Param('id') id: string, @Req() req) {
     const order = await this.orderService.status(
       id,
       data?.status ?? OrderStatus.PENDING,
     );
+    await this.logsService.createLog({
+      userId: req.user.id,
+      action: 'update order',
+      description: `User ${req.user.id} change order status to ${data.status} `,
+      ipAddress: 'this is an ip address',
+    });
     return order;
   }
 }

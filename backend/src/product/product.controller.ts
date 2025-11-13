@@ -82,8 +82,14 @@ export class ProductController {
   @Roles('admin')
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Body() data: any, @Param('id') id: string) {
+  async update(@Body() data: any, @Param('id') id: string, @Req() req) {
     const product = await this.productService.update(data, id);
+    await this.LogsService.createLog({
+      userId: req.user.id,
+      action: `update Product`,
+      description: `User ${req.user.id} update product N- ${id}`,
+      ipAddress: 'this is an ip address',
+    });
     return product;
   }
   @Get(':id/reviews')
