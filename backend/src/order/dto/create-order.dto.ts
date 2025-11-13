@@ -1,6 +1,16 @@
-import { IsNumber } from 'class-validator';
-
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+}
 export class CreateOrderDto {
   @IsNumber()
+  @IsOptional()
   total: number;
+  @IsEnum(OrderStatus)
+  @IsOptional()
+  status?: OrderStatus;
 }

@@ -27,7 +27,7 @@ export class CartItemService {
     });
     return cartItem;
   }
-  async itemQuantity(quantity: number, id: string) {
+  async updateQuantity(quantity: number, id: string) {
     if (isNaN(parseInt(id)))
       throw new BadRequestException('ID format not found');
     const cartItemCheck = await this.prisma.cartItem.findUnique({

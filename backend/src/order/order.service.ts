@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { stat } from 'fs';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
@@ -60,5 +62,18 @@ export class OrderService {
       },
     });
     return orders;
+  }
+  async status(id: string, status: OrderStatus) {
+    const checkOrder = await this.prisma.order.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    if (!checkOrder) throw new NotFoundException('order not found');
+    const order = await this.prisma.order.update({
+      where: { id: parseInt(id) },
+      data: { status: status },
+    });
+    return order;
   }
 }

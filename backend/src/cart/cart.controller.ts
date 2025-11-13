@@ -35,6 +35,7 @@ export class CartController {
       ipAddress: 'this is an ip address',
     });
   }
+  
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')

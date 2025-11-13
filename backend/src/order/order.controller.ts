@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -12,6 +13,8 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
+import { createCartDto } from 'src/cart/dto/create-cart.dto';
+import { OrderStatus } from '@prisma/client';
 
 @Controller('orders')
 export class OrderController {
@@ -53,5 +56,14 @@ export class OrderController {
   @Get('users/:id')
   async getUserOrders(@Param('id') id: string) {
     return await this.orderService.getUserOrders(id);
+  }
+
+  @Patch(':id')
+  async status(@Body() data: any, @Param('id') id: string) {
+    const order = await this.orderService.status(
+      id,
+      data?.status ?? OrderStatus.PENDING,
+    );
+    return order;
   }
 }

@@ -11,8 +11,14 @@ export class CartItemController {
     return cartItem;
   }
   @Patch(':id')
-  async update(@Body() data: createCartItemDto, @Param('id') id: string) {
-    const cartItem = await this.cartItemService.itemQuantity(data.quantity, id);
+  async updateQuantity(
+    @Body() data: createCartItemDto,
+    @Param('id') id: string,
+  ) {
+    const cartItem = await this.cartItemService.updateQuantity(
+      data.quantity,
+      id,
+    );
     return cartItem;
   }
 }
