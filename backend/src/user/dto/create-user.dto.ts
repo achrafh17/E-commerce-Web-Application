@@ -7,14 +7,19 @@ import {
   IsString,
 } from 'class-validator';
 export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-  GUEST = 'GUEST',
+  user = 'user',
+  admin = 'admin',
+  guest = 'guest',
+  seller = 'seller',
 }
+
 export class CreateUserDto {
   @IsString()
   username: string;
+
+  @IsString()
   password: string;
+
   @IsEnum(Role)
   @IsOptional()
   role?: Role;

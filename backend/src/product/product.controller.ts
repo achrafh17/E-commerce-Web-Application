@@ -14,6 +14,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
 import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/role.guard';
 
 @Controller('products')
 export class ProductController {
@@ -21,14 +22,15 @@ export class ProductController {
     private readonly productService: ProductService,
     private readonly LogsService: LogsService,
   ) {}
-  @UseGuards(JwtAuthGuard)
+  @Roles('seller')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() data: CreateProductDto, @Req() req) {
     const product = await this.productService.createProduct(data, req.user.id);
     await this.LogsService.createLog({
       userId: req.user.id,
-      action: 'Create Order',
-      description: `User ${req.user.id} delete Order N-${product.id}`,
+      action: 'Create Product',
+      description: `User ${req.user.id} created Product N- ${product.id}`,
       ipAddress: 'this is an ip address',
     });
     return product;
@@ -38,7 +40,7 @@ export class ProductController {
   getById(@Param('id') id: string) {
     return this.productService.getProduct(id);
   }
-
+  @Roles('seller')
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id') ids: string, @Req() req) {
@@ -61,7 +63,7 @@ export class ProductController {
     return this.productService.getUserProducts(id);
   }
   @UseGuards(JwtAuthGuard)
-  @Roles('admin')
+  @Roles('seller')
   @Patch(':id/status/:status')
   async disactivateProduct(
     @Param('id') id: string,
@@ -79,7 +81,7 @@ export class ProductController {
     });
     return product;
   }
-  @Roles('admin')
+  @Roles('seller')
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Body() data: any, @Param('id') id: string, @Req() req) {

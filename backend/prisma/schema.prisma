@@ -11,12 +11,14 @@ enum Role {
   user
   admin
   guest
+  seller
 }
 
 enum UserStatus {
   active
   inactive
   deleted
+  
 }
 
 model User {
@@ -78,7 +80,7 @@ model Order {
   user           User        @relation(fields: [userId], references: [id])
   items          OrderItem[]
   total          Float
-  shippingAmount Float     @default(0)
+  shippingAmount Float       @default(0)
   status         OrderStatus @default(PENDING)
   couponId       Int?
   coupon         Coupon?     @relation(fields: [couponId], references: [id])

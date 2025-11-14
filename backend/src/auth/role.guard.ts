@@ -1,18 +1,32 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Roles } from './roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
+    // Récupère les rôles depuis @Roles('seller')
     const requiredRoles = this.reflector.get<string[]>(
-      Roles,
+      'roles',
       context.getHandler(),
     );
+
     if (!requiredRoles) return true;
+
     const { user } = context.switchToHttp().getRequest();
-    console.log(user);
-    return requiredRoles.includes(user.role);
+
+    console.log('User role:', user.role, 'Required roles:', requiredRoles);
+
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException('Accès refusé : rôle insuffisant');
+    }
+
+    return true;
   }
 }
