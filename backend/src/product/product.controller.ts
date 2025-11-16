@@ -41,7 +41,7 @@ export class ProductController {
     return this.productService.getProduct(id);
   }
   @Roles('seller')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async delete(@Param('id') ids: string, @Req() req) {
     await this.LogsService.createLog({
@@ -62,8 +62,9 @@ export class ProductController {
   products(@Param('id') id: string) {
     return this.productService.getUserProducts(id);
   }
-  @UseGuards(JwtAuthGuard)
+
   @Roles('seller')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id/status/:status')
   async disactivateProduct(
     @Param('id') id: string,
@@ -82,7 +83,7 @@ export class ProductController {
     return product;
   }
   @Roles('seller')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async update(@Body() data: any, @Param('id') id: string, @Req() req) {
     const product = await this.productService.update(data, id);

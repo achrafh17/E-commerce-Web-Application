@@ -4,6 +4,7 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { createCouponDto } from './dto/create-coupon.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { LogsService } from 'src/logs/logs.service';
+import { RolesGuard } from 'src/auth/role.guard';
 
 @Controller('coupons')
 export class CouponController {
@@ -12,7 +13,7 @@ export class CouponController {
     private readonly logsService: LogsService,
   ) {}
   @Roles('admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() data: createCouponDto, @Req() req) {
     const coupon = await this.couponService.create(data, req.user.id);

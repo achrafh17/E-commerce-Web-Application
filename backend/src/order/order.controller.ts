@@ -16,6 +16,7 @@ import { LogsService } from 'src/logs/logs.service';
 import { createCartDto } from 'src/cart/dto/create-cart.dto';
 import { OrderStatus } from '@prisma/client';
 import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/role.guard';
 
 @Controller('orders')
 export class OrderController {
@@ -41,7 +42,7 @@ export class OrderController {
   }
 
   @Roles('admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   getAll() {
     return this.orderService.getOrders();

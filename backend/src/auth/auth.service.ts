@@ -3,12 +3,36 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import bcrypt from 'bcrypt';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { Role } from '@prisma/client';
+import * as crypto from 'crypto';
+import { MailService } from 'src/mail/mail.service';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly JwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
+
+  async createUser(data: CreateUserDto): Promise<Omit<User, 'password'>> {
+    try {
+      const hashedPassword: string = await bcrypt.hash(data.password, 10);
+      const user = await this.prisma.user.create({
+        data: {
+          ...data,
+          password: hashedPassword,
+          role: Role.user,
+        },
+      });
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
   async login(data: CreateAuthDto) {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -45,5 +69,37 @@ export class AuthService {
       data: data ?? null,
       token: token ?? null,
     };
+  }
+
+  async sendCode() {
+    try {
+      const code: string = crypto.randomBytes(2).toString('hex').toUpperCase();
+      const mail = await this.mailService.sendMail(
+        'achrafhafid565@gmail.com',
+        'test',
+        'test',
+        `<h1>${code}</h1>`,
+      );
+      return code;
+    } catch (error) {
+      return this.Response('error verfifying email', 'error', 500, error);
+    }
+  }
+  async verifiedEmail(verifiedEmail: boolean, id: string) {
+    try {
+      const userCheck = await this.prisma.user.findUnique({
+        where: { id: parseInt(id) },
+      });
+      if (!userCheck) throw new NotFoundException('user not found');
+      if (verifiedEmail === true) {
+        const user = await this.prisma.user.update({
+          where: { id: parseInt(id) },
+          data: { emailVerified: true },
+        });
+        return user;
+      }
+    } catch (error) {
+      return this.Response('error verifying the email', 'error', 500, error);
+    }
   }
 }

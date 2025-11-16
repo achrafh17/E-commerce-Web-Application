@@ -24,17 +24,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly LogsService: LogsService,
   ) {}
-  @Post()
-  async create(@Body() data: CreateUserDto) {
-    const user = await this.userService.createUser(data);
-    await this.LogsService.createLog({
-      userId: user.id,
-      action: `user created `,
-      description: `User ${user.id} has been registred`,
-      ipAddress: 'this is an ip address',
-    });
-    return user;
-  }
+
   @Get()
   getAll() {
     return this.userService.getUsers();
@@ -45,8 +35,9 @@ export class UserController {
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
-  @UseGuards(JwtAuthGuard)
+
   @Roles('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async Delete(@Param('id') id: string, @Req() req) {
     await this.LogsService.createLog({
@@ -79,7 +70,7 @@ export class UserController {
     return user;
   }
   @Roles('admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id/assignRole')
   async assignRole(@Body('role') role: Role, @Param('id') id: string) {
     const user = await this.userService.assignRole(role, id);

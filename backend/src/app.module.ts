@@ -22,6 +22,7 @@ import { CartController } from './cart/cart.controller';
 import { CartService } from './cart/cart.service';
 import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart-item/cart-item.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CartItemModule } from './cart-item/cart-item.module';
     CouponModule,
     CartModule,
     CartItemModule,
+    MailModule,
   ],
   controllers: [AppController, ProductController, OrderController, CouponController, CartController],
   providers: [

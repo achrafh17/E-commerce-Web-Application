@@ -8,10 +8,12 @@ import { JwtStrategy } from './jwt.strategy';
 import { LogsModule } from 'src/logs/logs.module';
 import { JwtAuthGuard } from './jwt.guard';
 import { RolesGuard } from './role.guard';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     PassportModule,
+    MailModule,
     LogsModule,
     PrismaModule,
     JwtModule.register({

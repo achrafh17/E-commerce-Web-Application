@@ -12,6 +12,8 @@ import { ReviewsService } from './reviews.service';
 import { createReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
+import { RolesGuard } from 'src/auth/role.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -44,8 +46,8 @@ export class ReviewsController {
     });
     return review;
   }
-
-  @UseGuards(JwtAuthGuard)
+  @Roles('user')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async update(@Body() data, @Param('id') id: string, @Req() req) {
     const review = await this.reviewService.update(data, id);
