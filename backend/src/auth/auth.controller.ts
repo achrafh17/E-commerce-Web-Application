@@ -4,6 +4,10 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { LogsService } from 'src/logs/logs.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { MailService } from 'src/mail/mail.service';
+import { sendCodeDto } from './dto/create-auth-sendCode.dto';
+import { verifyEmailDto } from './dto/verifyEmail.dto';
+import { recoverPasswordDto } from './dto/recoverCode.dto';
+import { resetPasswordDto } from './dto/resetPassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,14 +39,27 @@ export class AuthController {
     });
     return user;
   }
-  @Post('sendCode')
-  async sendCode() {
-    const code = await this.authService.sendCode();
+  @Post('send-code')
+  async sendCode(@Body() data: sendCodeDto) {
+    const code = await this.authService.sendEmailVerificationCode(data.email);
     return code;
   }
-  @Post(':id/emailVerified')
-  async emailVerified(@Body() data: any, @Param('id') id: string) {
-    const user = await this.authService.verifiedEmail(data.emailVerified, id);
+  @Post(':id/verify-email')
+  async emailVerified(@Body() data: verifyEmailDto, @Param('id') id: string) {
+    const user = await this.authService.verifyEmail(id, data.code);
     return user;
+  }
+  @Post('/recover-password')
+  async recoverPassword(@Body() data: recoverPasswordDto) {
+    const mail = await this.authService.recoverPassword(data.email);
+    return mail;
+  }
+  @Post('/reset-password')
+  async resetPassword(@Body() data: resetPasswordDto) {
+    const mail = await this.authService.resetPassword(
+      data.code,
+      data.newPassword,
+    );
+    return mail;
   }
 }
