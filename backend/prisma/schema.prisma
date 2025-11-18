@@ -50,23 +50,116 @@ enum ProductStatus {
   deleted
 }
 
+enum prodcuctCategory {
+  // Electronics
+  ELECTRONICS
+  PHONES
+  SMARTPHONES
+  PHONE_ACCESSORIES
+  COMPUTERS
+  LAPTOPS
+  DESKTOPS
+  COMPUTER_ACCESSORIES
+  GAMING
+  TV
+  AUDIO
+  CAMERA
+  DRONES
+  SMART_HOME
+
+  // Fashion
+  FASHION
+  MEN_CLOTHING
+  WOMEN_CLOTHING
+  KIDS_CLOTHING
+  SHOES
+  MEN_SHOES
+  WOMEN_SHOES
+  ACCESSORIES
+  WATCHES
+  JEWELRY
+  BAGS
+
+  // Beauty & Health
+  BEAUTY
+  SKINCARE
+  HAIRCARE
+  PERFUMES
+  MAKEUP
+  PERSONAL_CARE
+  HEALTH_CARE
+
+  // Home & Kitchen
+  HOME
+  FURNITURE
+  KITCHEN
+  DECOR
+  BEDROOM
+  BATHROOM
+  LIGHTING
+  CLEANING_SUPPLIES
+
+  // Supermarket
+  SUPERMARKET
+  FOOD
+  FRESH_PRODUCE
+  BEVERAGES
+  SNACKS
+  BABY_FOOD
+  PET_FOOD
+
+  // Appliances
+  APPLIANCES
+  LARGE_APPLIANCES
+  SMALL_APPLIANCES
+
+  // Sports & Outdoors
+  SPORTS
+  FITNESS
+  OUTDOOR
+  CAMPING
+  CYCLING
+
+  // Automotive
+  AUTOMOTIVE
+  CAR_ACCESSORIES
+  MOTORBIKE_ACCESSORIES
+
+  // Books & Media
+  BOOKS
+  STATIONERY
+  MUSIC
+  MOVIES
+
+  // Toys & Kids
+  TOYS
+  BABY_PRODUCTS
+  KIDS
+  SCHOOL_SUPPLIES
+
+  // Office & Industry
+  OFFICE_EQUIPMENT
+  INDUSTRIAL_SUPPLIES
+}
+
 model Product {
-  id          Int           @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   title       String
   description String?
   price       Float
   reference   String?
   imageUrl    String?
-  stock       Int           @default(0)
-  created_at  DateTime      @default(now())
-  update_at   DateTime      @updatedAt()
+  stock       Int              @default(0)
+  created_at  DateTime         @default(now())
+  update_at   DateTime         @updatedAt()
   ownerId     Int
-  owner       User          @relation("userProducts", fields: [ownerId], references: [id])
+  owner       User             @relation("userProducts", fields: [ownerId], references: [id])
   deletedAt   DateTime?
-  status      ProductStatus @default(active)
+  status      ProductStatus    @default(active)
   orders      OrderItem[]
   cartItems   cartItem[]
   reviews     Review[]
+  category    prodcuctCategory?
 }
 
 enum OrderStatus {
