@@ -19,6 +19,10 @@ import {
   Home,
   Sparkles,
   ArrowRight,
+  Dumbbell,
+  PenTool,
+  BabyIcon,
+  Utensils,
 } from "lucide-react";
 
 export default function MegaMartHomePage() {
@@ -56,13 +60,13 @@ export default function MegaMartHomePage() {
     { name: "Home ", icon: Home, color: "from-blue-500 to-cyan-500" },
     { name: "Beauty", icon: Sparkles, color: "from-fuchsia-500 to-pink-500" },
     {
-      name: "Smartphones",
-      icon: Smartphone,
+      name: "Kids",
+      icon: BabyIcon,
       color: "from-indigo-500 to-blue-500",
     },
-    { name: "Laptops", icon: Laptop, color: "from-purple-500 to-violet-500" },
-    { name: "Audio", icon: Headphones, color: "from-green-500 to-emerald-500" },
-    { name: "Cameras", icon: Camera, color: "from-orange-500 to-red-500" },
+    { name: "Food", icon: Utensils, color: "from-purple-500 to-violet-500" },
+    { name: "Sport", icon: Dumbbell, color: "from-green-500 to-emerald-500" },
+    { name: "School", icon: PenTool, color: "from-orange-500 to-red-500" },
   ];
 
   const featuredProducts = [
@@ -280,16 +284,16 @@ export default function MegaMartHomePage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
             <div
               key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200"
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
             >
               {/* Product Image */}
               <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-8xl transform group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 transition-opacity"></div>
+                <div className="text-8xl transform  transition-transform duration-500">
                   {product.image}
                 </div>
 
@@ -397,28 +401,206 @@ export default function MegaMartHomePage() {
         </div>
       </div>
 
-      {/* Newsletter Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="relative bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="relative px-8 py-12 text-center text-white">
-            <h2 className="text-4xl font-black mb-4">Stay in the Loop!</h2>
-            <p className="text-xl mb-8 text-white/90">
-              Subscribe to get exclusive deals and updates
-            </p>
-            <div className="flex justify-center">
-              <div className="flex bg-white rounded-2xl overflow-hidden shadow-2xl max-w-md w-full">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-6 py-4 text-gray-800 focus:outline-none"
-                />
-                <button className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-8 py-4 font-bold hover:shadow-xl transition-all">
-                  Subscribe
+      {/* Electronics section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+              Electronics section
+            </h2>
+          </div>
+          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+            <span>View All</span>
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredProducts.slice(0, 4).map((product) => (
+            <div
+              key={product.id}
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200"
+            >
+              {/* Product Image */}
+              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-8xl transform group-hover:scale-110 transition-transform duration-500">
+                  {product.image}
+                </div>
+
+                {/* Badge */}
+                <div
+                  className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
+                >
+                  {product.badge}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                    <Heart className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                    <Eye className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Product Info */}
+              <div className="p-6">
+                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-fuchsia-600 transition-colors">
+                  {product.name}
+                </h3>
+
+                {/* Rating */}
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(product.rating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    {product.rating} ({product.reviews})
+                  </span>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                      ${product.price}
+                    </span>
+                    <span className="text-sm text-gray-400 line-through ml-2">
+                      ${product.originalPrice}
+                    </span>
+                  </div>
+                  <span className="text-green-600 font-semibold text-sm">
+                    Save{" "}
+                    {Math.round(
+                      ((product.originalPrice - product.price) /
+                        product.originalPrice) *
+                        100
+                    )}
+                    %
+                  </span>
+                </div>
+
+                {/* Add to Cart Button */}
+                <button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Add to Cart</span>
                 </button>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+      {/* Home section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+              Home section
+            </h2>
           </div>
+          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+            <span>View All</span>
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredProducts.slice(0, 4).map((product) => (
+            <div
+              key={product.id}
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200"
+            >
+              {/* Product Image */}
+              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-8xl transform group-hover:scale-110 transition-transform duration-500">
+                  {product.image}
+                </div>
+
+                {/* Badge */}
+                <div
+                  className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
+                >
+                  {product.badge}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                    <Heart className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                    <Eye className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Product Info */}
+              <div className="p-6">
+                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-fuchsia-600 transition-colors">
+                  {product.name}
+                </h3>
+
+                {/* Rating */}
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(product.rating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    {product.rating} ({product.reviews})
+                  </span>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                      ${product.price}
+                    </span>
+                    <span className="text-sm text-gray-400 line-through ml-2">
+                      ${product.originalPrice}
+                    </span>
+                  </div>
+                  <span className="text-green-600 font-semibold text-sm">
+                    Save{" "}
+                    {Math.round(
+                      ((product.originalPrice - product.price) /
+                        product.originalPrice) *
+                        100
+                    )}
+                    %
+                  </span>
+                </div>
+
+                {/* Add to Cart Button */}
+                <button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Add to Cart</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
