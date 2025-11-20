@@ -22,7 +22,7 @@ export class ProductController {
     private readonly productService: ProductService,
     private readonly LogsService: LogsService,
   ) {}
-  @Roles('seller')
+  @Roles('seller', 'admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() data: CreateProductDto, @Req() req) {

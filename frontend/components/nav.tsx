@@ -50,6 +50,7 @@ import {
   ToyBrick,
   Factory,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function MegamartNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -245,25 +246,6 @@ export default function MegamartNavbar() {
                 <span className="font-semibold text-sm">Support</span>
               </button>
             </div>
-            {/* Center Categories - Desktop
-            <div className="hidden lg:flex items-center space-x-2">
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20 hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">
-                <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-sm">Electronics</span>
-              </button>
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20 hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">
-                <TrendingUp className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-sm">Trending</span>
-              </button>
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20 hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">
-                <Gift className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-sm">Deals</span>
-              </button>
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20 hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">
-                <Headphones className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-sm">Support</span>
-              </button>
-            </div> */}
             {/* Right Actions */}
             <div className="flex items-center space-x-3">
               {/* Search Icon - Mobile */}
@@ -272,10 +254,13 @@ export default function MegamartNavbar() {
               </button>
 
               {/* User Button */}
-              <button className="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 hover:shadow-l transition-all duration-300  group">
+              <Link
+                href="/login"
+                className="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 hover:shadow-l transition-all duration-300  group"
+              >
                 <User className="w-4 h-4  transition-transform" />
                 <span className="font-semibold text-sm">Account</span>
-              </button>
+              </Link>
 
               {/* Cart */}
               <button className="relative p-3 text-gray-600 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">

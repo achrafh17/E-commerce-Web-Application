@@ -419,12 +419,12 @@ export default function MegaMartHomePage() {
           {featuredProducts.slice(0, 4).map((product) => (
             <div
               key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200"
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
             >
               {/* Product Image */}
               <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-8xl transform group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 transition-opacity"></div>
+                <div className="text-8xl transform  transition-transform duration-500">
                   {product.image}
                 </div>
 
@@ -520,14 +520,14 @@ export default function MegaMartHomePage() {
           {featuredProducts.slice(0, 4).map((product) => (
             <div
               key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200"
+              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
             >
               {/* Product Image */}
               <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-8xl transform group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 transition-opacity"></div>
+                <div className="text-8xl transform  transition-transform duration-500">
                   {product.image}
-                </div>
+                </div> 
 
                 {/* Badge */}
                 <div
