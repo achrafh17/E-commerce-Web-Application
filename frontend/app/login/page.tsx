@@ -2,25 +2,115 @@
 
 import Loading from "@/components/loading";
 import { ArrowRight, Eye, EyeOff, ZapIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function LoginPage() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [isLoading, setisLoading] = useState(false);
   const [showPassword, setshowPassword] = useState(false);
   const [isEmailValid, setisEmailValid] = useState(true);
+  const [isPasswordValid, setisPasswordValid] = useState(true);
+  const [errorForm, seterrorForm] = useState("");
+  const [successForm, setsuccessForm] = useState("");
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const router = useRouter();
 
-  // to check the email form
+  //verfied the email form after every change
   const emailChangeVerification = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(emailRegex.test(e.target.value));
-    if (emailRegex.test(e.target.value)) setisEmailValid(true);
+    if (emailRegex.test(e.target.value) && e.target.value.length <= 254)
+      setisEmailValid(true);
     else setisEmailValid(false);
   };
-  const login = () => {
-    setisLoading(true);
+  //verfied the password form after every change
+  const passwordChangeVerification = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.value.length < 8) setisPasswordValid(false);
+    else setisPasswordValid(true);
   };
+  //principal function to login
+  const login = () => {
+    try {
+      setisLoading(true);
+      seterrorForm("");
+      if (!isEmailValid || !isPasswordValid) {
+        setisLoading(false);
+        if (!isEmailValid) {
+          seterrorForm("Please enter a valid email address.");
+        } else if (!isPasswordValid) {
+          seterrorForm("Password must be at least 8 characters long.");
+        }
+        return;
+      }
+      if (
+        !passwordRef.current ||
+        passwordRef.current.value === "" ||
+        !emailRef.current ||
+        emailRef.current.value === ""
+      ) {
+        setisLoading(false);
+        seterrorForm("Please fill in all the required fields");
+        return;
+      }
+
+      fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.status === "error") {
+            setisLoading(false);
+            seterrorForm(data.message);
+            return;
+          }
+          if (data.status === "success") {
+            setisLoading(false);
+            setsuccessForm(data.message);
+            sessionStorage.setItem("token", data.token);
+            setTimeout(() => {
+              router.back();
+            }, 3000);
+            return;
+          }
+        })
+        .finally(() => {
+          setisLoading(false);
+        })
+        .catch((error) => {
+          setisLoading(false);
+          console.log("error from login", error.message);
+          seterrorForm("Some error occured");
+        });
+    } catch (error) {
+      setisLoading(false);
+      const message = error instanceof Error ? error.message : "unknown error";
+      if (error instanceof Error) {
+        console.log("error from login", message);
+        seterrorForm("Some error occured");
+      }
+    }
+  };
+
+  //hide the form message after 3seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (errorForm !== "") seterrorForm("");
+      if (successForm !== "") setsuccessForm("");
+    }, 5000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [errorForm, successForm]);
 
   return (
     <div className="min-h-screen  flex items-center justify-center px-4 mt-14">
@@ -111,6 +201,11 @@ export default function LoginPage() {
                       : "border-red-600 focus:border-red-600 "
                   } focus:outline-none transition-colors`}
                 />
+                {!isEmailValid && (
+                  <p className="mt-1 text-sm text-red-500 tracking-wide">
+                    Email invalid
+                  </p>
+                )}{" "}
               </div>
             </div>
 
@@ -119,25 +214,48 @@ export default function LoginPage() {
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Password
               </label>
-              <div className="relative flex ">
+              <div className="relative  ">
                 <input
                   type={showPassword ? "text" : "password"}
                   ref={passwordRef}
+                  onChange={passwordChangeVerification}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-fuchsia-500 focus:outline-none transition-colors"
+                  className={`w-full px-4 py-3 rounded-xl border-2 ${
+                    isPasswordValid
+                      ? "border-gray-200 focus:border-fuchsia-500 "
+                      : "border-red-600 focus:border-red-600 "
+                  } focus:outline-none transition-colors`}
                 />
+                {errorForm !== "" && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2 mt-3 text-center">
+                    {errorForm}
+                  </div>
+                )}
+                {successForm !== "" && (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 mt-3 text-centerr">
+                    {successForm}
+                  </div>
+                )}
                 <button
-                  onClick={() => {
-                    setshowPassword(!showPassword);
+                  onMouseDown={() => {
+                    setshowPassword(true);
+                  }}
+                  onMouseUp={() => {
+                    setshowPassword(false);
                   }}
                   className="absolute right-3 top-4 cursor-pointer"
                 >
                   {showPassword ? (
-                    <Eye className="w-3 h-3" />
+                    <Eye className="w-5 h-5" />
                   ) : (
                     <EyeOff className="w-5 h-5" />
                   )}
                 </button>
+                {!isPasswordValid && (
+                  <p className="mt-1 text-sm text-red-500 tracking-wide">
+                    Password invalid
+                  </p>
+                )}
               </div>
             </div>
 
@@ -158,7 +276,7 @@ export default function LoginPage() {
             {/* Login Button */}
             <button
               className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2"
-              onClick={login}
+              onClick={login} disabled={isLoading}
             >
               <span>Sign In</span>
               <ArrowRight className="w-5 h-5" />

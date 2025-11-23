@@ -39,7 +39,13 @@ import { MailModule } from './mail/mail.module';
     CartItemModule,
     MailModule,
   ],
-  controllers: [AppController, ProductController, OrderController, CouponController, CartController],
+  controllers: [
+    AppController,
+    ProductController,
+    OrderController,
+    CouponController,
+    CartController,
+  ],
   providers: [
     AppService,
     UserService,

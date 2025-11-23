@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, startTransition } from "react";
 import {
   Search,
   ShoppingCart,
@@ -50,15 +50,28 @@ import {
   ToyBrick,
   Factory,
   ZapIcon,
+  UserSearch,
 } from "lucide-react";
 import Link from "next/link";
+import Loading from "./loading";
+import { usePathname } from "next/navigation";
 
 export default function MegamartNavbar() {
+  interface User {
+    username: string;
+    email: string;
+    id: number;
+  }
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+  const [loadingState, setloadingState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isCategoryOpen, setisCategoryOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
+  const [user, setuser] = useState<User>();
+  const [errorForm, seterrorForm] = useState("");
+  const pathName = usePathname();
   const categories = [
     // Electronics
     { name: "Electronics", icon: Zap, subCategory: false },
@@ -149,6 +162,48 @@ export default function MegamartNavbar() {
     { name: "Office Equipment", icon: Briefcase, subCategory: false },
     { name: "Industrial Supplies", icon: Factory, subCategory: true },
   ];
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      setloadingState("idle");
+      seterrorForm("Some Error Occured");
+      return;
+    }
+    if (token) {
+      startTransition(() => setloadingState("loading"));
+      fetch(`${API_BASE}/auth/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.error) {
+            setloadingState("error");
+            if (data.message.toLowerCase() === "tokenexpirederror") {
+              seterrorForm("Session Expired you need to sign In");
+              return;
+            }
+
+            return;
+          }
+          setuser(data);
+          setloadingState("success");
+        })
+        .finally(() => setloadingState("idle"))
+        .catch((err) => {
+          setloadingState("error");
+          seterrorForm("Some error occured");
+          sessionStorage.removeItem("token");
+          console.error(err);
+        });
+
+      seterrorForm("Session Expired you need to sign In");
+    }
+  }, [API_BASE]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -166,6 +221,7 @@ export default function MegamartNavbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
+      {loadingState === "loading" && <Loading />}
       {/* Glassmorphism Navbar */}
       <div className="relative bg-white/80 backdrop-blur-2xl border-b border-gray-200/50 shadow-xl">
         {/* Animated Background Gradient */}
@@ -175,6 +231,7 @@ export default function MegamartNavbar() {
           {/* Main Content */}
           <div className="flex items-center justify-between h-20">
             <button
+              type="button"
               onClick={() => setisCategoryOpen(!isCategoryOpen)}
               className="absolute top-6 left-[-100]  flex justify-center align-center text-gray-600 hover:text-fuchsia-600   rounded-xl transition-all duration-500 ease-in-out transform  group border border-transparent "
             >
@@ -222,14 +279,20 @@ export default function MegamartNavbar() {
                     onBlur={() => setIsSearchFocused(false)}
                     className="w-full bg-white text-gray-800 placeholder-gray-400 px-14 py-3 rounded-3xl border-2 border-gray-200 focus:border-fuchsia-400 focus:outline-none shadow-lg transition-all duration-300"
                   />
-                  <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold px-6 py-2 rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300">
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold px-6 py-2 rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300"
+                  >
                     Search
                   </button>
                 </div>
               </div>
             </div>
             <div>
-              <button className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20  group border border-transparent hover:border-fuchsia-200">
+              <button
+                type="button"
+                className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20  group border border-transparent hover:border-fuchsia-200"
+              >
                 <Headphones className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span className="font-semibold text-sm">Support</span>
               </button>
@@ -237,21 +300,52 @@ export default function MegamartNavbar() {
             {/* Right Actions */}
             <div className="flex items-center space-x-3">
               {/* Search Icon - Mobile */}
-              <button className="lg:hidden p-3 text-gray-600 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-xl transition-all duration-300">
+              <button
+                type="button"
+                className="lg:hidden p-3 text-gray-600 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-xl transition-all duration-300"
+              >
                 <Search className="w-5 h-5" />
               </button>
 
               {/* User Button */}
-              <Link
-                href="/login"
-                className="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 hover:shadow-l transition-all duration-300  group"
-              >
-                <User className="w-4 h-4  transition-transform" />
-                <span className="font-semibold text-sm">Account</span>
-              </Link>
+              {user ? (
+                <Link
+                  href="/profile"
+                  className="hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 border border-violet-500/20 hover:border-violet-500/40 hover:bg-gradient-to-r hover:from-violet-600/20 hover:to-fuchsia-600/20 transition-all duration-300 group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center ring-2 ring-violet-500/20">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-semibold text-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                    {user.username}{" "}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex items-center justify-arround gap-2">
+                  <Link
+                    href="/login"
+                    className="px-3 py-2.5 rounded-full text-sm font-semibold text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-violet-300 hover:bg-white hover:shadow-md transition-all duration-200"
+                    aria-label="Sign in"
+                  >
+                    Sign In
+                  </Link>
+
+                  <Link
+                    href="/signup"
+                    className="relative px-3 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:shadow-lg hover:shadow-violet-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden group"
+                    aria-label="Create account"
+                  >
+                    <span className="relative z-10">Create Account</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-700 via-fuchsia-700 to-pink-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  </Link>
+                </div>
+              )}
 
               {/* Cart */}
-              <button className="relative p-3 text-gray-600 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200">
+              <button
+                type="button"
+                className="relative p-3 text-gray-600 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200"
+              >
                 <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <div className="absolute -top-0 -right-0 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg shadow-pink-500/50 ">
                   0
@@ -260,6 +354,7 @@ export default function MegamartNavbar() {
 
               {/* Mobile Menu */}
               <button
+                type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="lg:hidden p-3 text-gray-600 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-xl transition-all duration-300"
               >
@@ -298,6 +393,7 @@ export default function MegamartNavbar() {
               const Icon = category.icon;
               return (
                 <button
+                  type="button"
                   key={category.name}
                   className="flex items-center justify-center space-x-2 px-4 py-4 bg-gradient-to-br from-violet-50 to-fuchsia-50 text-gray-700 hover:text-fuchsia-600 rounded-2xl transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-fuchsia-300"
                 >
@@ -309,7 +405,10 @@ export default function MegamartNavbar() {
           </div>
 
           {/* Mobile User Actions */}
-          <button className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300"
+          >
             <User className="w-5 h-5" />
             <span className="font-bold">Sign In / Register</span>
           </button>
@@ -336,6 +435,7 @@ export default function MegamartNavbar() {
               >
                 {" "}
                 <button
+                  type="button"
                   className={` flex items-center justify-center space-x-2 ${
                     category.subCategory ? "px-6" : "px-3"
                   }  py-3   `}
@@ -350,11 +450,63 @@ export default function MegamartNavbar() {
         </div>
       </div>
       {/* Decorative Bottom Line */}
-      <div
-        className={`${
-          isCategoryOpen ? "w-0 opcacity-0" : ""
-        } h-1 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600`}
-      ></div>
+      {errorForm !== "" &&
+        errorForm.toLowerCase().includes("expired") &&
+        !pathName.includes("login") && (
+          <div className=" w-full flex justify-center items-center">
+            <div className="flex items-center max-w-full w-full bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 text-white  shadow-xl px-4 py-2 space-x-3">
+              <UserSearch className="w-5 h-5 opacity-90" />
+              <div className="flex-1 text-sm font-medium truncate">
+                {errorForm}
+              </div>
+              <Link
+                href="/login"
+                className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-3 py-1 rounded-md"
+                onClick={() => seterrorForm("")}
+              >
+                Log In
+              </Link>
+              <button
+                type="button"
+                onClick={() => seterrorForm("")}
+                aria-label="Dismiss"
+                className="ml-2 p-1 rounded-full bg-white/20 hover:bg-white/30"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      {errorForm !== "" && !errorForm.toLowerCase().includes("expired") && (
+        <div className="w-full flex justify-center items-center">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="flex items-center max-w-full w-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white shadow-xl px-4 py-2 space-x-3 rounded-md"
+          >
+            <UserSearch className="w-5 h-5 opacity-95" />
+            <div className="flex-1 text-sm font-medium truncate">
+              {errorForm}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-3 py-1 rounded-md"
+            >
+              Try again
+            </button>
+            <button
+              type="button"
+              onClick={() => seterrorForm("")}
+              aria-label="Dismiss"
+              className="ml-2 p-1 rounded-full bg-white/20 hover:bg-white/30"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

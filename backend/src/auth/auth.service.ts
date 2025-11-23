@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -13,6 +14,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { Role } from '@prisma/client';
 import * as crypto from 'crypto';
 import { MailService } from 'src/mail/mail.service';
+import { tokenDto } from './dto/token.dto';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +55,12 @@ export class AuthService {
       if (!isMatch)
         return this.Response('Mail or password incorect', 'error', 401);
 
-      const payload = { sub: user.id, email: user.email, role: user.role };
+      const payload = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        username: user.username,
+      };
       const token = await this.jwtService.signAsync(payload);
       const { password, ...userWithoutPassord } = user;
       return this.Response(
@@ -84,6 +91,30 @@ export class AuthService {
     };
   }
 
+  tokenCheck(data: tokenDto) {
+    try {
+      const decoded = this.jwtService.verify<{
+        id: number;
+        email: string;
+        role: Role;
+        username: string;
+      }>(data.token);
+
+      return {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role,
+        username: decoded.username,
+      };
+    } catch (error) {
+      if (error.name === 'JsonWebTokenError')
+        throw new UnauthorizedException('JsonWebTokenError');
+      if (error.name === 'TokenExpiredError')
+        throw new UnauthorizedException('TokenExpiredError');
+
+      throw new UnauthorizedException('unknow error');
+    }
+  }
   async sendEmailVerificationCode(email: string) {
     try {
       const user = await this.prisma.user.findUnique({

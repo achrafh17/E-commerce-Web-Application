@@ -1,20 +1,29 @@
-import { Body, Controller, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LogsService } from 'src/logs/logs.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { MailService } from 'src/mail/mail.service';
 import { sendCodeDto } from './dto/create-auth-sendCode.dto';
 import { verifyEmailDto } from './dto/verifyEmail.dto';
 import { recoverPasswordDto } from './dto/recoverCode.dto';
 import { resetPasswordDto } from './dto/resetPassword.dto';
+import { tokenDto } from './dto/token.dto';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly logsService: LogsService,
-    private readonly mailService: MailService,
   ) {}
   @Post('register')
   async create(@Body() data: CreateUserDto) {
@@ -29,16 +38,28 @@ export class AuthController {
   }
   @Post('login')
   async login(@Body() data: CreateAuthDto) {
-    const user = await this.authService.login(data);
-    console.log(user);
-    await this.logsService.createLog({
-      userId: user.data.id,
-      action: 'login',
-      description: `User ${user.data.id} login`,
-      ipAddress: 'this is an ip address',
-    });
-    return user;
+    try {
+      const user = await this.authService.login(data);
+      if (user.data) {
+        await this.logsService.createLog({
+          userId: user.data.id,
+          action: 'login',
+          description: `User ${user.data.id} login`,
+          ipAddress: 'this is an ip address',
+        });
+      }
+      return user;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknow error';
+      throw new InternalServerErrorException(message);
+    }
   }
+  @Post('token')
+  tokenCheck(@Body() data: tokenDto) {
+    const decoded = this.authService.tokenCheck(data);
+    return decoded;
+  }
+
   @Post('send-code')
   async sendCode(@Body() data: sendCodeDto) {
     const code = await this.authService.sendEmailVerificationCode(data.email);
