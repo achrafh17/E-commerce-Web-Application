@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { LogsService } from 'src/logs/logs.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/role.guard';
+import { prodcuctCategory } from '@prisma/client';
 
 @Controller('products')
 export class ProductController {
@@ -99,5 +100,9 @@ export class ProductController {
   async getReviews(@Param('id') id: string) {
     const reviews = await this.productService.getReviews(id);
     return reviews;
+  }
+  @Get('/category/:category')
+  async getProductByCategory(@Param('category ') category: prodcuctCategory) {
+    return this.productService.getProductByCategory(category);
   }
 }

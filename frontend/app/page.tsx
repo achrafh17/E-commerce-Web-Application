@@ -24,9 +24,26 @@ import {
   BabyIcon,
   Utensils,
 } from "lucide-react";
+import { url } from "inspector";
 
 export default function MegaMartHomePage() {
+  interface Product {
+    id: number;
+    title: string;
+    description?: string | null;
+    price: number;
+    reference?: string | null;
+    imageUrl?: string | null;
+    images: string[];
+    stock: number;
+    created_at: string;
+    update_at: string;
+    ownerId: number;
+    category: string;
+  }
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [products, setproducts] = useState<Product[]>([]);
   const heroSlides = [
     {
       title: "Smartphone Deals",
@@ -58,7 +75,7 @@ export default function MegaMartHomePage() {
     { name: "Electronics", icon: Zap, color: "from-violet-500 to-purple-500" },
     { name: "Fashion", icon: Shirt, color: "from-pink-500 to-rose-500" },
     { name: "Home ", icon: Home, color: "from-blue-500 to-cyan-500" },
-    { name: "Beauty", icon: Sparkles, color: "from-fuchsia-500 to-pink-500" },
+    { name: "Beauty", icon: Sparkles, color: "from-indigo-500 to-pink-500" },
     {
       name: "Kids",
       icon: BabyIcon,
@@ -79,62 +96,7 @@ export default function MegaMartHomePage() {
       reviews: 1234,
       image: "🎧",
       badge: "Best Seller",
-      badgeColor: "from-violet-600 to-fuchsia-600",
-    },
-    {
-      id: 2,
-      name: "Smart Watch Pro",
-      price: 399.99,
-      originalPrice: 599.99,
-      rating: 4.9,
-      reviews: 2341,
-      image: "⌚",
-      badge: "Hot Deal",
-      badgeColor: "from-orange-600 to-red-600",
-    },
-    {
-      id: 3,
-      name: "4K Action Camera",
-      price: 249.99,
-      originalPrice: 399.99,
-      rating: 4.7,
-      reviews: 876,
-      image: "📷",
-      badge: "Trending",
-      badgeColor: "from-blue-600 to-cyan-600",
-    },
-    {
-      id: 4,
-      name: "Gaming Laptop",
-      price: 1299.99,
-      originalPrice: 1799.99,
-      rating: 4.9,
-      reviews: 456,
-      image: "💻",
-      badge: "New",
-      badgeColor: "from-green-600 to-emerald-600",
-    },
-    {
-      id: 5,
-      name: "Bluetooth Speaker",
-      price: 79.99,
-      originalPrice: 129.99,
-      rating: 4.6,
-      reviews: 3421,
-      image: "🔊",
-      badge: "Popular",
-      badgeColor: "from-pink-600 to-rose-600",
-    },
-    {
-      id: 6,
-      name: "Wireless Mouse",
-      price: 49.99,
-      originalPrice: 79.99,
-      rating: 4.5,
-      reviews: 987,
-      image: "🖱️",
-      badge: "Sale",
-      badgeColor: "from-purple-600 to-violet-600",
+      badgeColor: "from-violet-600 to-indigo-600",
     },
   ];
 
@@ -161,7 +123,7 @@ export default function MegaMartHomePage() {
       icon: Award,
       title: "Best Quality",
       description: "Certified products",
-      color: "from-violet-500 to-fuchsia-500",
+      color: "from-violet-500 to-indigo-500",
     },
   ];
 
@@ -171,6 +133,19 @@ export default function MegaMartHomePage() {
     }, 5000);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/products`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setproducts(data);
+      });
+    return () => {};
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -182,7 +157,7 @@ export default function MegaMartHomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
             {/* Animated Background */}
-            <div className="absolute inset-0  bg-gradient-to-r from-violet-600/20 via-fuchsia-600/20 to-pink-600/20 animate-pulse"></div>
+            <div className="absolute inset-0  bg-gradient-to-r from-violet-600/20 via-indigo-600/20 to-pink-600/20 animate-pulse"></div>
 
             {heroSlides.map((slide, index) => (
               <div
@@ -233,10 +208,10 @@ export default function MegaMartHomePage() {
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
             Shop by Category
           </h2>
-          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
             <span>View All</span>
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -273,12 +248,12 @@ export default function MegaMartHomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
               Featured Products
             </h2>
             <p className="text-gray-600 mt-2">Handpicked items just for you</p>
           </div>
-          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
             <span>View All</span>
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -306,10 +281,10 @@ export default function MegaMartHomePage() {
 
                 {/* Action Buttons */}
                 <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Heart className="w-5 h-5 text-gray-700" />
                   </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Eye className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
@@ -317,7 +292,7 @@ export default function MegaMartHomePage() {
 
               {/* Product Info */}
               <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-fuchsia-600 transition-colors">
+                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
                   {product.name}
                 </h3>
 
@@ -343,7 +318,7 @@ export default function MegaMartHomePage() {
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
                       ${product.price}
                     </span>
                     <span className="text-sm text-gray-400 line-through ml-2">
@@ -362,7 +337,7 @@ export default function MegaMartHomePage() {
                 </div>
 
                 {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
+                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
                   <span>Add to Cart</span>
                 </button>
@@ -372,31 +347,110 @@ export default function MegaMartHomePage() {
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="bg-white/50 backdrop-blur-sm py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Electronics Products */}
+      <div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600  bg-clip-text text-transparent">
+                Top Electronics Picks{" "}
+              </h2>
+              <p className="text-gray-600 mt-2">
+                Discover the latest gadgets just for you{" "}
+              </p>
+            </div>
+            <button className="text-indigo-600 font-semibold cursor-pointer flex items-center space-x-2 hover:space-x-3 transition-all">
+              <span>View All</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
+            {products
+              .filter((product: Product) => product.category === "electronics")
+              .slice(0, 4)
+              .map((product, index) => (
                 <div
-                  key={index}
-                  className="flex items-center space-x-4 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  key={product.id}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
                 >
-                  <div
-                    className={`bg-gradient-to-br ${feature.color} p-4 rounded-xl shadow-lg`}
-                  >
-                    <Icon className="w-8 h-8 text-white" />
+                  {/* Product Image */}
+                  <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 transition-opacity"></div>
+                    <div
+                      className=" absolute inset-0  bg-cover  bg-no-repeat "
+                      style={{
+                        backgroundImage: `url(${product.imageUrl})`,
+                      }}
+                    ></div>
+                    {/* Badge */}
+                    <div
+                      className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
+                    >
+                      {product.badge ? product.badge : ""}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                        <Heart className="w-5 h-5 text-gray-700" />
+                      </button>
+                      <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                        <Eye className="w-5 h-5 text-gray-700" />
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-800">{feature.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      {feature.description}
-                    </p>
+
+                  {/* Product Info */}
+                  <div className="p-6">
+                    <h3 className=" text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                      <span className="font-bold">{product.title}</span>-{" "}
+                      <span className="font-semibold">
+                        {" "}
+                        {product.description}
+                      </span>
+                    </h3>
+
+                    {/* Rating */}
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(product.rating)
+                                ? "text-red-400 fill-red-400"
+                                : "text-red-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {product.rating} ({product.reviews})
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm text-gray-800 mb-2  ">
+                        Sold By
+                      </h3>
+                    </div>
+
+                    {/* Price */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <span className="text-2xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent">
+                          {product.price}{" "}
+                          <span className="text-sm text-black">DH</span>
+                        </span>
+                      </div>
+                      {/* Add to Cart Button */}
+                      <button className="w-12 h-12 cursor-pointer bg-indigo-600 text-white rounded-3xl font transition-all duration-300 flex items-center justify-center group-hover:bg-green-600 hover:shadow-lg">
+                        <ShoppingCart className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              );
-            })}
+              ))}
           </div>
         </div>
       </div>
@@ -405,11 +459,11 @@ export default function MegaMartHomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
               Electronics section
             </h2>
           </div>
-          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
             <span>View All</span>
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -424,7 +478,7 @@ export default function MegaMartHomePage() {
               {/* Product Image */}
               <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 transition-opacity"></div>
-                <div className="text-8xl transform  transition-transform duration-500">
+                <div className="text-2xl transform  transition-transform duration-500">
                   {product.image}
                 </div>
 
@@ -437,10 +491,10 @@ export default function MegaMartHomePage() {
 
                 {/* Action Buttons */}
                 <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Heart className="w-5 h-5 text-gray-700" />
                   </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Eye className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
@@ -448,7 +502,7 @@ export default function MegaMartHomePage() {
 
               {/* Product Info */}
               <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-fuchsia-600 transition-colors">
+                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
                   {product.name}
                 </h3>
 
@@ -474,7 +528,7 @@ export default function MegaMartHomePage() {
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
                       ${product.price}
                     </span>
                     <span className="text-sm text-gray-400 line-through ml-2">
@@ -493,7 +547,7 @@ export default function MegaMartHomePage() {
                 </div>
 
                 {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
+                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
                   <span>Add to Cart</span>
                 </button>
@@ -503,14 +557,14 @@ export default function MegaMartHomePage() {
         </div>
       </div>
       {/* Home section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 hover:bg-red-400">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
               Home section
             </h2>
           </div>
-          <button className="text-fuchsia-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
+          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
             <span>View All</span>
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -527,7 +581,7 @@ export default function MegaMartHomePage() {
                 <div className="absolute inset-0 transition-opacity"></div>
                 <div className="text-8xl transform  transition-transform duration-500">
                   {product.image}
-                </div> 
+                </div>
 
                 {/* Badge */}
                 <div
@@ -538,10 +592,10 @@ export default function MegaMartHomePage() {
 
                 {/* Action Buttons */}
                 <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Heart className="w-5 h-5 text-gray-700" />
                   </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-fuchsia-50 transition-colors">
+                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                     <Eye className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
@@ -549,7 +603,7 @@ export default function MegaMartHomePage() {
 
               {/* Product Info */}
               <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-fuchsia-600 transition-colors">
+                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
                   {product.name}
                 </h3>
 
@@ -575,7 +629,7 @@ export default function MegaMartHomePage() {
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
                       ${product.price}
                     </span>
                     <span className="text-sm text-gray-400 line-through ml-2">
@@ -594,7 +648,7 @@ export default function MegaMartHomePage() {
                 </div>
 
                 {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
+                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
                   <span>Add to Cart</span>
                 </button>

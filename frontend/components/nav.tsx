@@ -166,8 +166,9 @@ export default function MegamartNavbar() {
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) {
+      seterrorForm("");
+      setuser(undefined);
       setloadingState("idle");
-      seterrorForm("Some Error Occured");
       return;
     }
     if (token) {
@@ -186,7 +187,6 @@ export default function MegamartNavbar() {
               seterrorForm("Session Expired you need to sign In");
               return;
             }
-
             return;
           }
           setuser(data);
@@ -225,7 +225,7 @@ export default function MegamartNavbar() {
       {/* Glassmorphism Navbar */}
       <div className="relative bg-white/80 backdrop-blur-2xl border-b border-gray-200/50 shadow-xl">
         {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 via-fuchsia-500/5 to-pink-500/5 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 via-indigo-500/5 to-pink-500/5 animate-pulse"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Main Content */}
@@ -233,7 +233,7 @@ export default function MegamartNavbar() {
             <button
               type="button"
               onClick={() => setisCategoryOpen(!isCategoryOpen)}
-              className="absolute top-6 left-[-100]  flex justify-center align-center text-gray-600 hover:text-fuchsia-600   rounded-xl transition-all duration-500 ease-in-out transform  group border border-transparent "
+              className="absolute top-6 left-[-100]  flex justify-center align-center text-gray-600 hover:text-indigo-600   rounded-xl transition-all duration-500 ease-in-out transform  group border border-transparent "
             >
               {isCategoryOpen ? (
                 <X className="w-8 h-8 text-center" />
@@ -245,13 +245,16 @@ export default function MegamartNavbar() {
             <div className="flex items-center cursor-pointer group">
               <div className="relative">
                 <div className="relative flex items-center space-x-3">
-                  <div className="bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 p-3 rounded-2xl transform transition-transform duration-500 ">
+                  <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-3 rounded-2xl transform transition-transform duration-500 ">
                     <ZapIcon className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+                    <Link
+                      href="/"
+                      className="text-3xl font-black bg-indigo-600 bg-clip-text text-transparent"
+                    >
                       MegaMart
-                    </h1>
+                    </Link>
                     <div className="flex items-center space-x-1">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                       <span className="text-[10px] text-gray-500 font-medium">
@@ -266,7 +269,7 @@ export default function MegamartNavbar() {
             <div className="hidden lg:block ">
               <div className="relative w-xl mx-auto">
                 <div
-                  className={`absolute -inset-1 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 rounded-3xl blur-lg transition-opacity duration-300 ${
+                  className={`absolute -inset-1 bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 rounded-3xl blur-lg transition-opacity duration-300 ${
                     isSearchFocused ? "opacity-30" : "opacity-0"
                   }`}
                 ></div>
@@ -277,11 +280,11 @@ export default function MegamartNavbar() {
                     placeholder="What are you looking for today?"
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
-                    className="w-full bg-white text-gray-800 placeholder-gray-400 px-14 py-3 rounded-3xl border-2 border-gray-200 focus:border-fuchsia-400 focus:outline-none shadow-lg transition-all duration-300"
+                    className="w-full bg-white text-gray-800 placeholder-gray-400 px-14 py-3 rounded-3xl border-2 border-gray-200 focus:border-indigo-400 focus:outline-none shadow-lg transition-all duration-300"
                   />
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold px-6 py-2 rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300"
+                    className="absolute right-2 top-1/2 cursor-pointer transform -translate-y-1/2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold px-6 py-2 rounded-2xl hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300"
                   >
                     Search
                   </button>
@@ -291,7 +294,7 @@ export default function MegamartNavbar() {
             <div>
               <button
                 type="button"
-                className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/20  group border border-transparent hover:border-fuchsia-200"
+                className="flex items-center cursor-pointer space-x-2 px-5 py-2.5 text-gray-700 hover:text-indigo-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20  group border border-transparent hover:border-indigo-200"
               >
                 <Headphones className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span className="font-semibold text-sm">Support</span>
@@ -302,7 +305,7 @@ export default function MegamartNavbar() {
               {/* Search Icon - Mobile */}
               <button
                 type="button"
-                className="lg:hidden p-3 text-gray-600 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-xl transition-all duration-300"
+                className="lg:hidden p-3 text-gray-600 hover:text-indigo-600  rounded-xl transition-all duration-300"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -311,12 +314,12 @@ export default function MegamartNavbar() {
               {user ? (
                 <Link
                   href="/profile"
-                  className="hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 border border-violet-500/20 hover:border-violet-500/40 hover:bg-gradient-to-r hover:from-violet-600/20 hover:to-fuchsia-600/20 transition-all duration-300 group"
+                  className="hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-violet-600/10 to-indigo-600/10 border border-violet-500/20 hover:border-violet-500/40 hover:bg-gradient-to-r hover:from-violet-600/20 hover:to-indigo-600/20 transition-all duration-300 group"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center ring-2 ring-violet-500/20">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center ring-2 ring-violet-500/20">
                     <User className="w-4 h-4 text-white" />
                   </div>
-                  <span className="font-semibold text-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  <span className="font-semibold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
                     {user.username}{" "}
                   </span>
                 </Link>
@@ -324,7 +327,7 @@ export default function MegamartNavbar() {
                 <div className="flex items-center justify-arround gap-2">
                   <Link
                     href="/login"
-                    className="px-3 py-2.5 rounded-full text-sm font-semibold text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-violet-300 hover:bg-white hover:shadow-md transition-all duration-200"
+                    className="px-2 py-2.5 rounded-full text-sm font-semibold text-indigo-600 bg-white/80 backdrop-blur-sm border "
                     aria-label="Sign in"
                   >
                     Sign In
@@ -332,11 +335,10 @@ export default function MegamartNavbar() {
 
                   <Link
                     href="/signup"
-                    className="relative px-3 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:shadow-lg hover:shadow-violet-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden group"
+                    className="relative px-2 py-2.5 rounded-full text-sm font-semibold text-white bg-indigo-500  transition-all duration-200 overflow-hidden group"
                     aria-label="Create account"
                   >
                     <span className="relative z-10">Create Account</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-violet-700 via-fuchsia-700 to-pink-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </Link>
                 </div>
               )}
@@ -344,10 +346,10 @@ export default function MegamartNavbar() {
               {/* Cart */}
               <button
                 type="button"
-                className="relative p-3 text-gray-600 hover:text-fuchsia-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group border border-transparent hover:border-fuchsia-200"
+                className="relative p-3 text-gray-600 cursor-pointer hover:text-indigo-600 bg-gray-50/50 hover:bg-white rounded-2xl transition-all duration-300  group border border-transparent hover:border-indigo-200"
               >
-                <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <div className="absolute -top-0 -right-0 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg shadow-pink-500/50 ">
+                <ShoppingCart className="w-5 h-5 " />
+                <div className="absolute -top-0 -right-0 bg-indigo-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center ">
                   0
                 </div>
               </button>
@@ -356,7 +358,7 @@ export default function MegamartNavbar() {
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-3 text-gray-600 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-xl transition-all duration-300"
+                className="lg:hidden p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-300"
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6" />
@@ -383,7 +385,7 @@ export default function MegamartNavbar() {
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 px-12 py-4 rounded-2xl border border-gray-200 focus:border-fuchsia-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-200 transition-all"
+              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 px-12 py-4 rounded-2xl border border-gray-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all"
             />
           </div>
 
@@ -395,7 +397,7 @@ export default function MegamartNavbar() {
                 <button
                   type="button"
                   key={category.name}
-                  className="flex items-center justify-center space-x-2 px-4 py-4 bg-gradient-to-br from-violet-50 to-fuchsia-50 text-gray-700 hover:text-fuchsia-600 rounded-2xl transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-fuchsia-300"
+                  className="flex items-center justify-center space-x-2 px-4 py-4 bg-gradient-to-br from-violet-50 to-indigo-50 text-gray-700 hover:text-indigo-600 rounded-2xl transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-indigo-300"
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-semibold text-sm">{category.name}</span>
@@ -407,7 +409,7 @@ export default function MegamartNavbar() {
           {/* Mobile User Actions */}
           <button
             type="button"
-            className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl hover:shadow-xl hover:shadow-fuchsia-500/40 transition-all duration-300"
+            className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-2xl hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300"
           >
             <User className="w-5 h-5" />
             <span className="font-bold">Sign In / Register</span>
@@ -429,7 +431,7 @@ export default function MegamartNavbar() {
                 key={category.name}
                 className={`${
                   category.subCategory
-                    ? "hover:text-fuchsia-600 hover:shadow-lg"
+                    ? "hover:text-indigo-600 hover:shadow-lg"
                     : "bg-pink-100"
                 }  transition-all duration-300 `}
               >
@@ -454,7 +456,7 @@ export default function MegamartNavbar() {
         errorForm.toLowerCase().includes("expired") &&
         !pathName.includes("login") && (
           <div className=" w-full flex justify-center items-center">
-            <div className="flex items-center max-w-full w-full bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 text-white  shadow-xl px-4 py-2 space-x-3">
+            <div className="flex items-center max-w-full w-full bg-gradient-to-r from-rose-600 via-pink-600 to-indigo-600 text-white  shadow-xl px-4 py-2 space-x-3">
               <UserSearch className="w-5 h-5 opacity-90" />
               <div className="flex-1 text-sm font-medium truncate">
                 {errorForm}

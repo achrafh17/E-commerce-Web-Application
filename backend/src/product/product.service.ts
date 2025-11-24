@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { prodcuctCategory } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -105,5 +106,17 @@ export class ProductService {
       where: { productId: parseInt(id) },
     });
     return reviews;
+  }
+  async getProductByCategory(category: prodcuctCategory) {
+    try {
+      const products = await this.prisma.product.findMany({
+        where: { category: category },
+      });
+
+      return products;
+    } catch (error) {
+      const message = error instanceof Error ? error : 'Unknow problem ';
+      throw new NotFoundException(message);
+    }
   }
 }
