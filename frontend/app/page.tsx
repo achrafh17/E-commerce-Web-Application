@@ -24,7 +24,7 @@ import {
   BabyIcon,
   Utensils,
 } from "lucide-react";
-import { url } from "inspector";
+import Link from "next/link";
 
 export default function MegaMartHomePage() {
   interface Product {
@@ -40,6 +40,7 @@ export default function MegaMartHomePage() {
     update_at: string;
     ownerId: number;
     category: string;
+    ownerName: string;
   }
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -73,17 +74,17 @@ export default function MegaMartHomePage() {
 
   const categories = [
     { name: "Electronics", icon: Zap, color: "from-violet-500 to-purple-500" },
-    { name: "Fashion", icon: Shirt, color: "from-pink-500 to-rose-500" },
-    { name: "Home ", icon: Home, color: "from-blue-500 to-cyan-500" },
-    { name: "Beauty", icon: Sparkles, color: "from-indigo-500 to-pink-500" },
-    {
-      name: "Kids",
-      icon: BabyIcon,
-      color: "from-indigo-500 to-blue-500",
-    },
-    { name: "Food", icon: Utensils, color: "from-purple-500 to-violet-500" },
-    { name: "Sport", icon: Dumbbell, color: "from-green-500 to-emerald-500" },
-    { name: "School", icon: PenTool, color: "from-orange-500 to-red-500" },
+    // { name: "Fashion", icon: Shirt, color: "from-pink-500 to-rose-500" },
+    // { name: "Home ", icon: Home, color: "from-blue-500 to-cyan-500" },
+    // { name: "Beauty", icon: Sparkles, color: "from-indigo-500 to-pink-500" },
+    // {
+    //   name: "Kids",
+    //   icon: BabyIcon,z
+    //   color: "from-indigo-500 to-blue-500",
+    // },
+    // { name: "Food", icon: Utensils, color: "from-purple-500 to-violet-500" },
+    // { name: "Sport", icon: Dumbbell, color: "from-green-500 to-emerald-500" },
+    // { name: "School", icon: PenTool, color: "from-orange-500 to-red-500" },
   ];
 
   const featuredProducts = [
@@ -243,421 +244,338 @@ export default function MegaMartHomePage() {
           })}
         </div>
       </div>
-
-      {/* Featured Products */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
-              Featured Products
-            </h2>
-            <p className="text-gray-600 mt-2">Handpicked items just for you</p>
-          </div>
-          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
-            <span>View All</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
-            >
-              {/* Product Image */}
-              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 transition-opacity"></div>
-                <div className="text-8xl transform  transition-transform duration-500">
-                  {product.image}
-                </div>
-
-                {/* Badge */}
-                <div
-                  className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
-                >
-                  {product.badge}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Heart className="w-5 h-5 text-gray-700" />
-                  </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Eye className="w-5 h-5 text-gray-700" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
-                  {product.name}
-                </h3>
-
-                {/* Rating */}
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-600">
-                    {product.rating} ({product.reviews})
-                  </span>
-                </div>
-
-                {/* Price */}
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                      ${product.price}
-                    </span>
-                    <span className="text-sm text-gray-400 line-through ml-2">
-                      ${product.originalPrice}
-                    </span>
-                  </div>
-                  <span className="text-green-600 font-semibold text-sm">
-                    Save{" "}
-                    {Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )}
-                    %
-                  </span>
-                </div>
-
-                {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Add to Cart</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Electronics Products */}
-      <div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600  bg-clip-text text-transparent">
-                Top Electronics Picks{" "}
-              </h2>
-              <p className="text-gray-600 mt-2">
-                Discover the latest gadgets just for you{" "}
-              </p>
+
+      {products && products.length > 0 ? (
+        <div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600  bg-clip-text text-transparent">
+                  Top Electronics Picks{" "}
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  Discover the latest gadgets just for you{" "}
+                </p>
+              </div>
+              <Link
+                href="category/electronics"
+                className="text-indigo-600 font-semibold cursor-pointer flex items-center space-x-2 hover:space-x-3 transition-all"
+              >
+                <span>View All</span>
+                <ChevronRight className="w-5 h-5" />
+              </Link>
             </div>
-            <button className="text-indigo-600 font-semibold cursor-pointer flex items-center space-x-2 hover:space-x-3 transition-all">
-              <span>View All</span>
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products
-              .filter((product: Product) => product.category === "electronics")
-              .slice(0, 4)
-              .map((product, index) => (
-                <div
-                  key={product.id}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
-                >
-                  {/* Product Image */}
-                  <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 transition-opacity"></div>
-                    <div
-                      className=" absolute inset-0  bg-cover  bg-no-repeat "
-                      style={{
-                        backgroundImage: `url(${product.imageUrl})`,
-                      }}
-                    ></div>
-                    {/* Badge */}
-                    <div
-                      className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
-                    >
-                      {product.badge ? product.badge : ""}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                        <Heart className="w-5 h-5 text-gray-700" />
-                      </button>
-                      <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                        <Eye className="w-5 h-5 text-gray-700" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-6">
-                    <h3 className=" text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
-                      <span className="font-bold">{product.title}</span>-{" "}
-                      <span className="font-semibold">
-                        {" "}
-                        {product.description}
-                      </span>
-                    </h3>
-
-                    {/* Rating */}
-                    <div className="flex items-center space-x-2 mb-3">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < Math.floor(product.rating)
-                                ? "text-red-400 fill-red-400"
-                                : "text-red-300"
-                            }`}
-                          />
-                        ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products
+                .filter(
+                  (product: Product) => product.category === "electronics"
+                )
+                .slice(0, 4)
+                .map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
+                  >
+                    {/* Product Image */}
+                    <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 transition-opacity"></div>
+                      <div
+                        className=" absolute inset-0  bg-cover  bg-no-repeat "
+                        style={{
+                          backgroundImage: `url(${product.imageUrl})`,
+                        }}
+                      ></div>
+                      {/* Badge */}
+                      <div
+                        className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
+                      >
+                        {product.badge ? product.badge : ""}
                       </div>
-                      <span className="text-sm text-gray-600">
-                        {product.rating} ({product.reviews})
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-gray-800 mb-2  ">
-                        Sold By
-                      </h3>
+
+                      {/* Action Buttons */}
+                      <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                          <Heart className="w-5 h-5 text-gray-700" />
+                        </button>
+                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                          <Eye className="w-5 h-5 text-gray-700" />
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Price */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="text-2xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent">
-                          {product.price}{" "}
-                          <span className="text-sm text-black">DH</span>
+                    {/* Product Info */}
+                    <div className="p-6">
+                      <h3 className=" text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                        <span className="font-bold">{product.title}</span>-{" "}
+                        <span className="font-semibold">
+                          {" "}
+                          {product.description}
+                        </span>
+                      </h3>
+
+                      {/* Rating */}
+                      <div className="flex items-center space-x-2 mb-3">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < Math.floor(product.rating)
+                                  ? "text-red-400 fill-red-400"
+                                  : "text-red-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {product.rating} ({product.reviews})
                         </span>
                       </div>
-                      {/* Add to Cart Button */}
-                      <button className="w-12 h-12 cursor-pointer bg-indigo-600 text-white rounded-3xl font transition-all duration-300 flex items-center justify-center group-hover:bg-green-600 hover:shadow-lg">
-                        <ShoppingCart className="w-5 h-5" />
-                      </button>
+                      <div>
+                        <h3 className="font-semibold text-sm text-gray-800 mb-2  ">
+                          Sold By{" "}
+                          <span className="font-bold text-indigo-400 text-md">
+                            {product.ownerName}
+                          </span>
+                        </h3>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <span className="text-2xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent">
+                            {product.price}{" "}
+                            <span className="text-sm text-black">DH</span>
+                          </span>
+                        </div>
+                        {/* Add to Cart Button */}
+                        <button className="w-12 h-12 cursor-pointer bg-indigo-600 text-white rounded-3xl font transition-all duration-300 flex items-center justify-center  hover:shadow-lg hover:scale-110">
+                          <ShoppingCart className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Electronics section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
-              Electronics section
-            </h2>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="space-y-2">
+              <div className="h-8 w-64 rounded-xl bg-gray-200 animate-pulse"></div>
+              <div className="h-4 w-40 rounded-md bg-gray-200 animate-pulse"></div>
+            </div>
+            <div className="h-5 w-24 rounded-md bg-gray-200 animate-pulse"></div>
           </div>
-          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
-            <span>View All</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.slice(0, 4).map((product) => (
-            <div
-              key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
-            >
-              {/* Product Image */}
-              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 transition-opacity"></div>
-                <div className="text-2xl transform  transition-transform duration-500">
-                  {product.image}
-                </div>
+          {/* grid skeleton cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-200"
+              >
+                {/* Image skeleton */}
+                <div className="h-40 w-full bg-gray-200 animate-pulse"></div>
 
-                {/* Badge */}
-                <div
-                  className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
-                >
-                  {product.badge}
-                </div>
+                {/* Content skeleton */}
+                <div className="p-6 space-y-3">
+                  <div className="h-4 w-3/4 rounded-md bg-gray-200 animate-pulse"></div>
+                  <div className="h-4 w-1/2 rounded-md bg-gray-200 animate-pulse"></div>
 
-                {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Heart className="w-5 h-5 text-gray-700" />
-                  </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Eye className="w-5 h-5 text-gray-700" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
-                  {product.name}
-                </h3>
-
-                {/* Rating */}
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
+                  {/* Rating skeleton */}
+                  <div className="flex space-x-1">
+                    {[1, 2, 3, 4, 5].map((j) => (
+                      <div
+                        key={j}
+                        className="h-4 w-4 rounded-full bg-gray-300 animate-pulse"
+                      ></div>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600">
-                    {product.rating} ({product.reviews})
-                  </span>
-                </div>
 
-                {/* Price */}
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                      ${product.price}
-                    </span>
-                    <span className="text-sm text-gray-400 line-through ml-2">
-                      ${product.originalPrice}
-                    </span>
+                  {/* Owner skeleton */}
+                  <div className="h-4 w-32 rounded-md bg-gray-200 animate-pulse"></div>
+
+                  {/* Price + button skeleton */}
+                  <div className="flex justify-between items-center pt-2">
+                    <div className="h-6 w-20 rounded-lg bg-gray-200 animate-pulse"></div>
+                    <div className="h-10 w-10 rounded-full bg-gray-300 animate-pulse"></div>
                   </div>
-                  <span className="text-green-600 font-semibold text-sm">
-                    Save{" "}
-                    {Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )}
-                    %
-                  </span>
                 </div>
-
-                {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Add to Cart</span>
-                </button>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Home section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 hover:bg-red-400">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
-              Home section
-            </h2>
+            ))}
           </div>
-          <button className="text-indigo-600 font-semibold flex items-center space-x-2 hover:space-x-3 transition-all">
-            <span>View All</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.slice(0, 4).map((product) => (
-            <div
-              key={product.id}
-              className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
-            >
-              {/* Product Image */}
-              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 transition-opacity"></div>
-                <div className="text-8xl transform  transition-transform duration-500">
-                  {product.image}
-                </div>
-
-                {/* Badge */}
-                <div
-                  className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
-                >
-                  {product.badge}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Heart className="w-5 h-5 text-gray-700" />
-                  </button>
-                  <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                    <Eye className="w-5 h-5 text-gray-700" />
-                  </button>
-                </div>
+      )}
+      {/* Fashion Products */}
+      {products && products.length > 0 ? (
+        <div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600  bg-clip-text text-transparent">
+                  Fashion{" "}
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  Explore trendy outfits, shoes, and accessories that match your
+                  style.{" "}
+                </p>
               </div>
+              <Link
+                href="category/fashion"
+                className="text-indigo-600 font-semibold cursor-pointer flex items-center space-x-2 hover:space-x-3 transition-all"
+              >
+                <span>View All</span>
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
 
-              {/* Product Info */}
-              <div className="p-6">
-                <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
-                  {product.name}
-                </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products
+                .filter((product: Product) => product.category === "fashion")
+                .slice(0, 4)
+                .map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
+                  >
+                    {/* Product Image */}
+                    <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 transition-opacity"></div>
+                      <div
+                        className=" absolute inset-0  bg-cover  bg-no-repeat "
+                        style={{
+                          backgroundImage: `url(${product.imageUrl})`,
+                        }}
+                      ></div>
+                      {/* Badge */}
+                      <div
+                        className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
+                      >
+                        {product.badge ? product.badge : ""}
+                      </div>
 
-                {/* Rating */}
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
+                      {/* Action Buttons */}
+                      <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                          <Heart className="w-5 h-5 text-gray-700" />
+                        </button>
+                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
+                          <Eye className="w-5 h-5 text-gray-700" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="p-6">
+                      <h3 className=" text-lg text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                        <span className="font-bold">{product.title}</span>-{" "}
+                        <span className="font-semibold">
+                          {" "}
+                          {product.description}
+                        </span>
+                      </h3>
+
+                      {/* Rating */}
+                      <div className="flex items-center space-x-2 mb-3">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < Math.floor(product.rating)
+                                  ? "text-red-400 fill-red-400"
+                                  : "text-red-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {product.rating} ({product.reviews})
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm text-gray-800 mb-2  ">
+                          Sold By{" "}
+                          <span className="font-bold text-indigo-400 text-md">
+                            {product.ownerName}
+                          </span>
+                        </h3>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <span className="text-2xl font-black bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent">
+                            {product.price}{" "}
+                            <span className="text-sm text-black">DH</span>
+                          </span>
+                        </div>
+                        {/* Add to Cart Button */}
+                        <button className="w-12 h-12 cursor-pointer bg-indigo-600 text-white rounded-3xl font transition-all duration-300 flex items-center justify-center  hover:shadow-lg hover:scale-110">
+                          <ShoppingCart className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="space-y-2">
+              <div className="h-8 w-64 rounded-xl bg-gray-200 animate-pulse"></div>
+              <div className="h-4 w-40 rounded-md bg-gray-200 animate-pulse"></div>
+            </div>
+            <div className="h-5 w-24 rounded-md bg-gray-200 animate-pulse"></div>
+          </div>
+
+          {/* grid skeleton cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-200"
+              >
+                {/* Image skeleton */}
+                <div className="h-40 w-full bg-gray-200 animate-pulse"></div>
+
+                {/* Content skeleton */}
+                <div className="p-6 space-y-3">
+                  <div className="h-4 w-3/4 rounded-md bg-gray-200 animate-pulse"></div>
+                  <div className="h-4 w-1/2 rounded-md bg-gray-200 animate-pulse"></div>
+
+                  {/* Rating skeleton */}
+                  <div className="flex space-x-1">
+                    {[1, 2, 3, 4, 5].map((j) => (
+                      <div
+                        key={j}
+                        className="h-4 w-4 rounded-full bg-gray-300 animate-pulse"
+                      ></div>
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600">
-                    {product.rating} ({product.reviews})
-                  </span>
-                </div>
 
-                {/* Price */}
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                      ${product.price}
-                    </span>
-                    <span className="text-sm text-gray-400 line-through ml-2">
-                      ${product.originalPrice}
-                    </span>
+                  {/* Owner skeleton */}
+                  <div className="h-4 w-32 rounded-md bg-gray-200 animate-pulse"></div>
+
+                  {/* Price + button skeleton */}
+                  <div className="flex justify-between items-center pt-2">
+                    <div className="h-6 w-20 rounded-lg bg-gray-200 animate-pulse"></div>
+                    <div className="h-10 w-10 rounded-full bg-gray-300 animate-pulse"></div>
                   </div>
-                  <span className="text-green-600 font-semibold text-sm">
-                    Save{" "}
-                    {Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )}
-                    %
-                  </span>
                 </div>
-
-                {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Add to Cart</span>
-                </button>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-
+      )}
       {/* Footer Spacer */}
       <div className="h-12"></div>
     </div>

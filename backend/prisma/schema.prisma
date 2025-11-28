@@ -169,6 +169,7 @@ model Product {
   update_at   DateTime          @updatedAt()
   ownerId     Int
   owner       User              @relation("userProducts", fields: [ownerId], references: [id])
+  ownerName   String?          
   deletedAt   DateTime?
   status      ProductStatus     @default(active)
   orders      OrderItem[]

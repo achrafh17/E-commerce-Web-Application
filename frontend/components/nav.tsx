@@ -199,8 +199,6 @@ export default function MegamartNavbar() {
           sessionStorage.removeItem("token");
           console.error(err);
         });
-
-      seterrorForm("Session Expired you need to sign In");
     }
   }, [API_BASE]);
 

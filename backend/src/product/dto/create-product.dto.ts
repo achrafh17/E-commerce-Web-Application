@@ -5,6 +5,7 @@ export class CreateProductDto {
   title: string;
   description: string;
   imageUrl: string;
+  ownerName: string;
   @IsNumber()
   price: number;
 }

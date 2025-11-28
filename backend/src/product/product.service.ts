@@ -11,8 +11,11 @@ import { prodcuctCategory } from '@prisma/client';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
   async createProduct(data: CreateProductDto, ownerId: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: ownerId } });
+    if (!user) throw new NotFoundException('user not found');
+    const ownerName = user.username;
     const product = await this.prisma.product.create({
-      data: { ...data, ownerId },
+      data: { ...data, ownerId, ownerName },
     });
     return product;
   }
