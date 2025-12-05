@@ -105,4 +105,19 @@ export class ProductController {
   async getProductByCategory(@Param('category ') category: prodcuctCategory) {
     return this.productService.getProductByCategory(category);
   }
+  @Roles('user', 'admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('/favoritedProduct/:id')
+  async addFavoritedProduct(@Req() req, @Param('id') productId: string) {
+    const favoritedProduct = await this.productService.addFavoritedProduct(
+      productId,
+      req.user.id,
+    );
+    return favoritedProduct;
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('/favorite/favorited')
+  async getFavoritedProduct(@Req() req) {
+    return await this.productService.getFavoritedProduct(req.user.id);
+  }
 }

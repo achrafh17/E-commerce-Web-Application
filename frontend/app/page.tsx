@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, startTransition } from "react";
 import {
   ChevronRight,
   Star,
@@ -25,6 +25,7 @@ import {
   Utensils,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function MegaMartHomePage() {
   interface Product {
@@ -41,10 +42,36 @@ export default function MegaMartHomePage() {
     ownerId: number;
     category: string;
     ownerName: string;
+    favoritedBy: any;
   }
+  //only the user payload not all the informations
+  interface UserPayload {
+    email: string;
+    id: number;
+    role: string;
+    username: string;
+  }
+  const pathName = usePathname();
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+  const [loading, setloading] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setproducts] = useState<Product[]>([]);
+  const [productToFavorited, setproductToFavorited] = useState<number>();
+  const [user, setUser] = useState<UserPayload>();
+  const [token, setToken] = useState("");
+  //--------------extract token-----------------------
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("token is null");
+      return;
+    }
+    startTransition(() => setToken(token));
+  }, [pathName]);
+
+  //--------diferents variables---------
   const heroSlides = [
     {
       title: "Smartphone Deals",
@@ -127,14 +154,36 @@ export default function MegaMartHomePage() {
       color: "from-violet-500 to-indigo-500",
     },
   ];
-
+  // caroussel logic--------------------------------------------------------
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
-
+  //-------------fetch the user data if the token exists--------------------
+  useEffect(() => {
+    if (token)
+      fetch(`${API_BASE}/auth/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setUser(data);
+        })
+        .catch((error) => {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "unknown error at fetching user data";
+          console.log(message);
+        });
+    return () => {};
+  }, [token, pathName]);
+  //----------fetch product data----------------------------------------------
   useEffect(() => {
     fetch(`${API_BASE}/products`, {
       method: "GET",
@@ -146,7 +195,73 @@ export default function MegaMartHomePage() {
         setproducts(data);
       });
     return () => {};
-  }, []);
+  }, [loading, pathName]);
+  //-------------------------favorite items--------------------------------
+  const Favorited = (productId: number) => {
+    try {
+      if (!token) {
+        console.error("token not found");
+        setloading("error");
+        return;
+      }
+      setloading("loading");
+      fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+        .finally(() => setloading("idle"))
+        .catch(() => setloading("error"));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "unknown error";
+      setloading("error");
+    }
+  };
+  //------------------check if a product favorited by a User-------------------------------------
+
+  const checkProductFavorited = (userId: number, productId: number) => {
+    // at the loading data
+    if (!products) return false;
+    // filter the array to get only the products that get favorited
+    const filtredFavoritesProducts = products.filter(
+      (product) => product.favoritedBy.length !== 0
+    );
+    //mapping the products that get favorited
+    const favorites = filtredFavoritesProducts.flatMap((product) =>
+      //remap the favoritedBy arrays for each product
+      product.favoritedBy.map((favorited) => favorited)
+    );
+    // return if the product && user  matched the favorite object
+    return favorites.some(
+      (fav) => fav.userId === userId && fav.productId === productId
+    );
+  };
+  //----------------toggle favorite--------------------------------------------------------
+  const toggleFavorite = (productId: number) => {
+    if (!productId) return;
+    if (!token) {
+      console.log("token null");
+      return;
+    }
+    try {
+      fetch(`${API_BASE}/products//favoritedProduct/${productId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -170,9 +285,7 @@ export default function MegaMartHomePage() {
                 <div
                   className={`absolute inset-0  bg-cover bg-center bg-no-repeat `}
                   style={{ backgroundImage: `url(${slide.image})` }}
-                >
-                  {/* <img src="/smartphones-deal.jpeg" alt="" /> */}
-                </div>
+                ></div>
                 <div className="relative h-full flex items-center justify-between px-12">
                   <div className="text-white max-w-xl">
                     <h2 className="text-5xl font-black mb-4 drop-shadow-2xl">
@@ -296,8 +409,19 @@ export default function MegaMartHomePage() {
 
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                          <Heart className="w-5 h-5 text-gray-700" />
+                        <button
+                          onClick={() => {
+                            Favorited(product.id);
+                          }}
+                          className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
+                        >
+                          <Heart
+                            className={`w-5 h-5 ${
+                              checkProductFavorited(user?.id, product.id)
+                                ? "text-indigo-500 fill-indigo-500"
+                                : "text-indigo-500"
+                            }  }`}
+                          />
                         </button>
                         <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                           <Eye className="w-5 h-5 text-gray-700" />
@@ -603,9 +727,7 @@ export default function MegaMartHomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {products
-                .filter(
-                  (product: Product) => product.category === "home"
-                )
+                .filter((product: Product) => product.category === "home")
                 .slice(0, 4)
                 .map((product, index) => (
                   <div

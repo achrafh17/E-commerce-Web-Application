@@ -164,11 +164,15 @@ export default function MegamartNavbar() {
   ];
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    startTransition(() => seterrorForm(""));
     const token = sessionStorage.getItem("token");
     if (!token) {
-      seterrorForm("");
-      setuser(undefined);
-      setloadingState("idle");
+      console.warn("token is null", token);
+      startTransition(() => {
+        seterrorForm("Need to sign In");
+        setuser(undefined);
+        setloadingState("idle");
+      });
       return;
     }
     if (token) {
@@ -200,7 +204,7 @@ export default function MegamartNavbar() {
           console.error(err);
         });
     }
-  }, [API_BASE]);
+  }, [pathName]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -451,7 +455,8 @@ export default function MegamartNavbar() {
       </div>
       {/* Decorative Bottom Line */}
       {errorForm !== "" &&
-        errorForm.toLowerCase().includes("expired") &&
+        (errorForm.toLowerCase().includes("expired") ||
+          errorForm.toLowerCase().includes("sign")) &&
         !pathName.includes("login") && (
           <div className=" w-full flex justify-center items-center">
             <div className="flex items-center max-w-full w-full bg-gradient-to-r from-rose-600 via-pink-600 to-indigo-600 text-white  shadow-xl px-4 py-2 space-x-3">
@@ -477,36 +482,38 @@ export default function MegamartNavbar() {
             </div>
           </div>
         )}
-      {errorForm !== "" && !errorForm.toLowerCase().includes("expired") && (
-        <div className="w-full flex justify-center items-center">
-          <div
-            role="alert"
-            aria-live="assertive"
-            className="flex items-center max-w-full w-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white shadow-xl px-4 py-2 space-x-3 rounded-md"
-          >
-            <UserSearch className="w-5 h-5 opacity-95" />
-            <div className="flex-1 text-sm font-medium truncate">
-              {errorForm}
-            </div>
+      {errorForm !== "" &&
+        !errorForm.toLowerCase().includes("expired") &&
+        !errorForm.toLowerCase().includes("sign") && (
+          <div className="w-full flex justify-center items-center">
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="flex items-center max-w-full w-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white shadow-xl px-4 py-2 space-x-3 rounded-md"
+            >
+              <UserSearch className="w-5 h-5 opacity-95" />
+              <div className="flex-1 text-sm font-medium truncate">
+                {errorForm}
+              </div>
 
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-3 py-1 rounded-md"
-            >
-              Try again
-            </button>
-            <button
-              type="button"
-              onClick={() => seterrorForm("")}
-              aria-label="Dismiss"
-              className="ml-2 p-1 rounded-full bg-white/20 hover:bg-white/30"
-            >
-              <X className="w-4 h-4" />
-            </button>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="text-sm font-semibold bg-white/20 hover:bg-white/30 px-3 py-1 rounded-md"
+              >
+                Try again
+              </button>
+              <button
+                type="button"
+                onClick={() => seterrorForm("")}
+                aria-label="Dismiss"
+                className="ml-2 p-1 rounded-full bg-white/20 hover:bg-white/30"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

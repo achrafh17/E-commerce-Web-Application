@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -49,7 +50,11 @@ export class ProductService {
   }
 
   async getProducts() {
-    const products = await this.prisma.product.findMany();
+    const products = await this.prisma.product.findMany({
+      include: {
+        favoritedBy: {},
+      },
+    });
     if (products.length === 0)
       throw new NotFoundException('No products available');
     return products;
@@ -121,5 +126,34 @@ export class ProductService {
       const message = error instanceof Error ? error : 'Unknow problem ';
       throw new NotFoundException(message);
     }
+  }
+
+  async addFavoritedProduct(productId: string, userId: string) {
+    try {
+      if (isNaN(parseInt(userId)))
+        throw new BadRequestException('ID format not found');
+      const user = await this.prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+      });
+      if (!user) throw new NotFoundException('user not found');
+      if (isNaN(parseInt(productId)))
+        throw new BadRequestException('ID format not found');
+      const product = await this.prisma.product.findUnique({
+        where: { id: parseInt(productId) },
+      });
+      if (!product) throw new NotFoundException('product not found');
+      await this.prisma.favorite.create({
+        data: { userId: parseInt(userId), productId: parseInt(productId) },
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknnown error';
+      throw new InternalServerErrorException(message);
+    }
+  }
+  async getFavoritedProduct(userId: string) {
+    const product = await this.prisma.favorite.findMany({
+      where: { userId: parseInt(userId) },
+    });
+    return product;
   }
 }

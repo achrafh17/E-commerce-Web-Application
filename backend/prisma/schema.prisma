@@ -21,16 +21,16 @@ enum UserStatus {
 }
 
 model User {
-  id                      Int        @id @default(autoincrement())
-  username                String
-  email                   String     @unique
-  password                String
-  role                    Role       @default(user)
-  updated_at              DateTime   @updatedAt()
-  created_at              DateTime   @default(now())
-  orders                  Order[]
-  status                  UserStatus @default(active)
-  products                Product[]  @relation("userProducts")
+  id         Int        @id @default(autoincrement())
+  username   String
+  email      String     @unique
+  password   String
+  role       Role       @default(user)
+  updated_at DateTime   @updatedAt()
+  created_at DateTime   @default(now())
+  orders     Order[]
+  status     UserStatus @default(active)
+  products   Product[]  @relation("userProducts")
   deletedAt               DateTime?
   logs                    logs[]
   reviews                 Review[]
@@ -42,6 +42,7 @@ model User {
   verificationCodeExpires DateTime?
   resetCode               String?
   resetCodeExpires        DateTime?
+  favorites               Favorite[]
 }
 
 enum ProductStatus {
@@ -169,7 +170,7 @@ model Product {
   update_at   DateTime          @updatedAt()
   ownerId     Int
   owner       User              @relation("userProducts", fields: [ownerId], references: [id])
-  ownerName   String?          
+  ownerName   String?
   deletedAt   DateTime?
   status      ProductStatus     @default(active)
   orders      OrderItem[]
@@ -179,6 +180,18 @@ model Product {
   subCategory subCategory?
   variants    Json?
   dimensions  Json?
+  favoritedBy Favorite[]
+}
+
+model Favorite {
+  id        Int      @default(autoincrement())
+  userId    Int
+  productId Int
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }
 
 enum OrderStatus {
