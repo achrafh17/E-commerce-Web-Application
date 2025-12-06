@@ -115,6 +115,18 @@ export class ProductController {
     );
     return favoritedProduct;
   }
+
+  @Roles('user', 'admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('/favoritedProduct/:id')
+  async deleteFavoritedProduct(@Req() req, @Param('id') productId: string) {
+    const favoritedProduct = await this.productService.removeFavoritedProduct(
+      productId,
+      req.user.id,
+    );
+    return favoritedProduct;
+  }
+  
   @UseGuards(JwtAuthGuard)
   @Get('/favorite/favorited')
   async getFavoritedProduct(@Req() req) {

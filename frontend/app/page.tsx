@@ -3,54 +3,20 @@ import React, { useState, useEffect, startTransition } from "react";
 import {
   ChevronRight,
   Star,
-  Zap,
   Heart,
   Eye,
   ShoppingCart,
-  Truck,
-  Shield,
-  CreditCard,
-  Award,
-  Smartphone,
-  Laptop,
-  Headphones,
-  Camera,
-  Shirt,
-  Home,
-  Sparkles,
   ArrowRight,
-  Dumbbell,
-  PenTool,
-  BabyIcon,
-  Utensils,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import toast from "react-hot-toast";
+import { categories, heroSlides } from "./data/homeData";
+import { Product } from "./types/product";
+import { UserPayload } from "./types/userPayload";
+import { Favorite } from "./types/Favorite";
 
 export default function MegaMartHomePage() {
-  interface Product {
-    id: number;
-    title: string;
-    description?: string | null;
-    price: number;
-    reference?: string | null;
-    imageUrl?: string | null;
-    images: string[];
-    stock: number;
-    created_at: string;
-    update_at: string;
-    ownerId: number;
-    category: string;
-    ownerName: string;
-    favoritedBy: any;
-  }
-  //only the user payload not all the informations
-  interface UserPayload {
-    email: string;
-    id: number;
-    role: string;
-    username: string;
-  }
   const pathName = usePathname();
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
   const [loading, setloading] = useState<
@@ -58,7 +24,7 @@ export default function MegaMartHomePage() {
   >("idle");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setproducts] = useState<Product[]>([]);
-  const [productToFavorited, setproductToFavorited] = useState<number>();
+  const [rendering, setRendering] = useState(false);
   const [user, setUser] = useState<UserPayload>();
   const [token, setToken] = useState("");
   //--------------extract token-----------------------
@@ -71,89 +37,6 @@ export default function MegaMartHomePage() {
     startTransition(() => setToken(token));
   }, [pathName]);
 
-  //--------diferents variables---------
-  const heroSlides = [
-    {
-      title: "Smartphone Deals",
-      subtitle: "Up to 40% OFF on latest iPhone & Samsung models",
-      gradient: "from-blue-600 via-cyan-500 to-green-400",
-      image: "/smartphones-deal.jpeg",
-    },
-    {
-      title: "Home Appliances Sale",
-      subtitle: "Save big on Kitchen & Laundry Essentials",
-      gradient: "from-orange-500 via-red-500 to-pink-500",
-      image: "/home-category.jpeg",
-    },
-    {
-      title: "Fashion Trends",
-      subtitle: "New season collection up to 50% OFF",
-      gradient: "from-purple-600 via-pink-500 to-red-400",
-      image: "/clothes-category.jpeg",
-    },
-    {
-      title: "Electronics",
-      subtitle: "Exclusive deals on laptops, consoles, and accessories",
-      gradient: "from-gray-800 via-indigo-700 to-blue-600",
-      image: "/gadgets-category.jpg",
-    },
-  ];
-
-  const categories = [
-    { name: "Electronics", icon: Zap, color: "from-violet-500 to-purple-500" },
-    // { name: "Fashion", icon: Shirt, color: "from-pink-500 to-rose-500" },
-    // { name: "Home ", icon: Home, color: "from-blue-500 to-cyan-500" },
-    // { name: "Beauty", icon: Sparkles, color: "from-indigo-500 to-pink-500" },
-    // {
-    //   name: "Kids",
-    //   icon: BabyIcon,z
-    //   color: "from-indigo-500 to-blue-500",
-    // },
-    // { name: "Food", icon: Utensils, color: "from-purple-500 to-violet-500" },
-    // { name: "Sport", icon: Dumbbell, color: "from-green-500 to-emerald-500" },
-    // { name: "School", icon: PenTool, color: "from-orange-500 to-red-500" },
-  ];
-
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      price: 299.99,
-      originalPrice: 499.99,
-      rating: 4.8,
-      reviews: 1234,
-      image: "🎧",
-      badge: "Best Seller",
-      badgeColor: "from-violet-600 to-indigo-600",
-    },
-  ];
-
-  const features = [
-    {
-      icon: Truck,
-      title: "Free Shipping",
-      description: "On orders over $50",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: Shield,
-      title: "Secure Payment",
-      description: "100% protected",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      icon: CreditCard,
-      title: "Easy Returns",
-      description: "30-day guarantee",
-      color: "from-orange-500 to-red-500",
-    },
-    {
-      icon: Award,
-      title: "Best Quality",
-      description: "Certified products",
-      color: "from-violet-500 to-indigo-500",
-    },
-  ];
   // caroussel logic--------------------------------------------------------
   useEffect(() => {
     const timer = setInterval(() => {
@@ -182,7 +65,7 @@ export default function MegaMartHomePage() {
           console.log(message);
         });
     return () => {};
-  }, [token, pathName]);
+  }, [API_BASE, token, pathName]);
   //----------fetch product data----------------------------------------------
   useEffect(() => {
     fetch(`${API_BASE}/products`, {
@@ -191,37 +74,37 @@ export default function MegaMartHomePage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        console.log("GET PRODUCT", data);
         setproducts(data);
       });
     return () => {};
-  }, [loading, pathName]);
+  }, [API_BASE, loading, pathName, rendering]);
   //-------------------------favorite items--------------------------------
-  const Favorited = (productId: number) => {
-    try {
-      if (!token) {
-        console.error("token not found");
-        setloading("error");
-        return;
-      }
-      setloading("loading");
-      fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({}),
-      })
-        .then((res) => res.json())
-        .then((data) => console.log(data))
-        .finally(() => setloading("idle"))
-        .catch(() => setloading("error"));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "unknown error";
-      setloading("error");
-    }
-  };
+  // const Favorited = (productId: number) => {
+  //   try {
+  //     if (!token) {
+  //       console.error("token not found");
+  //       setloading("error");
+  //       return;
+  //     }
+  //     setloading("loading");
+  //     fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({}),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => console.log(data))
+  //       .finally(() => setloading("idle"))
+  //       .catch(() => setloading("error"));
+  //   } catch (error) {
+  //     const message = error instanceof Error ? error.message : "unknown error";
+  //     setloading("error");
+  //   }
+  // };
   //------------------check if a product favorited by a User-------------------------------------
 
   const checkProductFavorited = (userId: number, productId: number) => {
@@ -234,32 +117,42 @@ export default function MegaMartHomePage() {
     //mapping the products that get favorited
     const favorites = filtredFavoritesProducts.flatMap((product) =>
       //remap the favoritedBy arrays for each product
-      product.favoritedBy.map((favorited) => favorited)
+      product.favoritedBy.map((favorited: Favorite) => favorited)
     );
     // return if the product && user  matched the favorite object
     return favorites.some(
       (fav) => fav.userId === userId && fav.productId === productId
     );
   };
+  //------------------add a favorite product toggle---------------------------------------
+  const makeFavorite = (productId: number) => {};
+
   //----------------toggle favorite--------------------------------------------------------
-  const toggleFavorite = (productId: number) => {
+  const toggleFavorite = (productId: number, isFavorited: boolean) => {
     if (!productId) return;
     if (!token) {
       console.log("token null");
       return;
     }
     try {
-      fetch(`${API_BASE}/products//favoritedProduct/${productId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        method: "POST",
-      })
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+      if (isFavorited) {
+        fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          method: "POST",
+        }).then((data) => {
+          console.log(data);
+          toast.success("item added to favorites");
+          setRendering(true);
+        });
+      } else {
+        toast.error("item removed from  favorites");
+      }
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 
@@ -411,7 +304,10 @@ export default function MegaMartHomePage() {
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => {
-                            Favorited(product.id);
+                            toggleFavorite(
+                              product.id,
+                              checkProductFavorited(user?.id, product.id)
+                            );
                           }}
                           className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
                         >
@@ -586,8 +482,19 @@ export default function MegaMartHomePage() {
 
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                          <Heart className="w-5 h-5 text-gray-700" />
+                        <button
+                          onClick={() => {
+                            toggleFavorite(product.id);
+                          }}
+                          className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
+                        >
+                          <Heart
+                            className={`w-5 h-5 ${
+                              checkProductFavorited(user?.id, product.id)
+                                ? "text-indigo-500 fill-indigo-500"
+                                : "text-indigo-500"
+                            }  }`}
+                          />
                         </button>
                         <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                           <Eye className="w-5 h-5 text-gray-700" />
@@ -752,8 +659,19 @@ export default function MegaMartHomePage() {
 
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
-                          <Heart className="w-5 h-5 text-gray-700" />
+                        <button
+                          onClick={() => {
+                            toggleFavorite(product.id);
+                          }}
+                          className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
+                        >
+                          <Heart
+                            className={`w-5 h-5 ${
+                              checkProductFavorited(user?.id, product.id)
+                                ? "text-indigo-500 fill-indigo-500"
+                                : "text-indigo-500"
+                            }  }`}
+                          />
                         </button>
                         <button className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors">
                           <Eye className="w-5 h-5 text-gray-700" />

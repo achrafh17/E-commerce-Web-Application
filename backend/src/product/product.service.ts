@@ -150,6 +150,38 @@ export class ProductService {
       throw new InternalServerErrorException(message);
     }
   }
+  async removeFavoritedProduct(productId: string, userId: string) {
+    try {
+      if (isNaN(parseInt(userId)))
+        throw new BadRequestException('ID format not found');
+      const user = await this.prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+      });
+      if (!user) throw new NotFoundException('user not found');
+      if (isNaN(parseInt(productId)))
+        throw new BadRequestException('ID format not found');
+      const product = await this.prisma.product.findUnique({
+        where: { id: parseInt(productId) },
+      });
+      if (!product) throw new NotFoundException('product not found');
+      const favorite = await this.prisma.favorite.findFirst({
+        where: { userId: parseInt(userId), productId: parseInt(productId) },
+      });
+      if (!favorite) throw new NotFoundException('favorite item not found');
+      await this.prisma.favorite.delete({
+        where: {
+          userId_productId: {
+            userId: parseInt(userId),
+            productId: parseInt(productId),
+          },
+        },
+      });
+      return favorite;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknnown error';
+      throw new InternalServerErrorException(message);
+    }
+  }
   async getFavoritedProduct(userId: string) {
     const product = await this.prisma.favorite.findMany({
       where: { userId: parseInt(userId) },
