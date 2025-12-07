@@ -142,7 +142,19 @@ export class ProductService {
         where: { id: parseInt(productId) },
       });
       if (!product) throw new NotFoundException('product not found');
-      await this.prisma.favorite.create({
+      const checkfavoritedProduct = await this.prisma.favorite.findUnique({
+        where: {
+          userId_productId: {
+            userId: parseInt(userId),
+            productId: parseInt(productId),
+          },
+        },
+      });
+      if (checkfavoritedProduct !== null && checkfavoritedProduct !== undefined)
+        throw new InternalServerErrorException(
+          'the product is aleardy on the favorite list',
+        );
+      return await this.prisma.favorite.create({
         data: { userId: parseInt(userId), productId: parseInt(productId) },
       });
     } catch (error) {

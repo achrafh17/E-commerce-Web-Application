@@ -79,77 +79,62 @@ export default function MegaMartHomePage() {
       });
     return () => {};
   }, [API_BASE, loading, pathName, rendering]);
-  //-------------------------favorite items--------------------------------
-  // const Favorited = (productId: number) => {
-  //   try {
-  //     if (!token) {
-  //       console.error("token not found");
-  //       setloading("error");
-  //       return;
-  //     }
-  //     setloading("loading");
-  //     fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({}),
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => console.log(data))
-  //       .finally(() => setloading("idle"))
-  //       .catch(() => setloading("error"));
-  //   } catch (error) {
-  //     const message = error instanceof Error ? error.message : "unknown error";
-  //     setloading("error");
-  //   }
-  // };
+  useEffect(() => {
+    console.log("test the rendring", rendering);
+    return () => {};
+  }, [rendering]);
+
   //------------------check if a product favorited by a User-------------------------------------
 
-  const checkProductFavorited = (userId: number, productId: number) => {
-    // at the loading data
-    if (!products) return false;
-    // filter the array to get only the products that get favorited
-    const filtredFavoritesProducts = products.filter(
-      (product) => product.favoritedBy.length !== 0
-    );
-    //mapping the products that get favorited
-    const favorites = filtredFavoritesProducts.flatMap((product) =>
-      //remap the favoritedBy arrays for each product
-      product.favoritedBy.map((favorited: Favorite) => favorited)
-    );
-    // return if the product && user  matched the favorite object
-    return favorites.some(
-      (fav) => fav.userId === userId && fav.productId === productId
-    );
+  const checkProductFavorited = (productId: number) => {
+    try {
+      const product = products.find((prod) => prod.id === productId);
+      if (!product || !product.favoritedBy) return false;
+      return product.favoritedBy.some(
+        (favorite: Favorite) => favorite.userId === user?.id
+      );
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
-  //------------------add a favorite product toggle---------------------------------------
-  const makeFavorite = (productId: number) => {};
 
   //----------------toggle favorite--------------------------------------------------------
   const toggleFavorite = (productId: number, isFavorited: boolean) => {
-    if (!productId) return;
-    if (!token) {
-      console.log("token null");
+    if (isFavorited !== true && isFavorited !== false) {
+      console.log("isFavorited null", productId);
       return;
     }
+    if (!productId) return;
+    if (!token) {
+      console.log("You need to Sign In first");
+      return;
+    }
+    const method = isFavorited ? "DELETE" : "POST";
     try {
-      if (isFavorited) {
-        fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          method: "POST",
-        }).then((data) => {
-          console.log(data);
-          toast.success("item added to favorites");
-          setRendering(true);
+      // if the product is not in the favorited list
+      fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        method: method,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("data from favorite", data);
+          if (
+            typeof data.message === "string" &&
+            ["tokenexpirederror", "unauthorized"].includes(
+              data.message.toLowerCase()
+            )
+          ) {
+            return toast.error("You need to sign In First");
+          }
+          if (!isFavorited) toast.success("Product added to your favorites");
+          else toast.success("Product removed from favorites");
+          setRendering((prev) => !prev);
         });
-      } else {
-        toast.error("item removed from  favorites");
-      }
     } catch (error) {
       console.log(error);
       return false;
@@ -306,14 +291,14 @@ export default function MegaMartHomePage() {
                           onClick={() => {
                             toggleFavorite(
                               product.id,
-                              checkProductFavorited(user?.id, product.id)
+                              checkProductFavorited(product.id)
                             );
                           }}
                           className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
                         >
                           <Heart
                             className={`w-5 h-5 ${
-                              checkProductFavorited(user?.id, product.id)
+                              checkProductFavorited(product.id)
                                 ? "text-indigo-500 fill-indigo-500"
                                 : "text-indigo-500"
                             }  }`}
@@ -484,13 +469,16 @@ export default function MegaMartHomePage() {
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => {
-                            toggleFavorite(product.id);
+                            toggleFavorite(
+                              product.id,
+                              checkProductFavorited(product.id)
+                            );
                           }}
                           className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
                         >
                           <Heart
                             className={`w-5 h-5 ${
-                              checkProductFavorited(user?.id, product.id)
+                              checkProductFavorited(product.id)
                                 ? "text-indigo-500 fill-indigo-500"
                                 : "text-indigo-500"
                             }  }`}
@@ -661,13 +649,16 @@ export default function MegaMartHomePage() {
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => {
-                            toggleFavorite(product.id);
+                            toggleFavorite(
+                              product.id,
+                              checkProductFavorited(product.id)
+                            );
                           }}
                           className="bg-white p-3 rounded-xl shadow-lg hover:bg-indigo-50 transition-colors"
                         >
                           <Heart
                             className={`w-5 h-5 ${
-                              checkProductFavorited(user?.id, product.id)
+                              checkProductFavorited(product.id)
                                 ? "text-indigo-500 fill-indigo-500"
                                 : "text-indigo-500"
                             }  }`}

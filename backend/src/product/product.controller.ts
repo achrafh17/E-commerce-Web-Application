@@ -16,6 +16,7 @@ import { LogsService } from 'src/logs/logs.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/role.guard';
 import { prodcuctCategory } from '@prisma/client';
+import { successResponse } from 'src/utils/response,utils';
 
 @Controller('products')
 export class ProductController {
@@ -109,11 +110,16 @@ export class ProductController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('/favoritedProduct/:id')
   async addFavoritedProduct(@Req() req, @Param('id') productId: string) {
+    
     const favoritedProduct = await this.productService.addFavoritedProduct(
       productId,
       req.user.id,
     );
-    return favoritedProduct;
+    return successResponse(
+      'product has been added to the favorites list',
+      favoritedProduct,
+      201,
+    );
   }
 
   @Roles('user', 'admin')
@@ -124,9 +130,13 @@ export class ProductController {
       productId,
       req.user.id,
     );
-    return favoritedProduct;
+    return successResponse(
+      'product has been removed form favorites list',
+      favoritedProduct,
+      201,
+    );
   }
-  
+
   @UseGuards(JwtAuthGuard)
   @Get('/favorite/favorited')
   async getFavoritedProduct(@Req() req) {
