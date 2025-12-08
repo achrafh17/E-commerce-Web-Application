@@ -153,7 +153,6 @@ export default function MegaMartHomePage() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Spacer for fixed navbar */}
@@ -458,7 +457,6 @@ export default function MegaMartHomePage() {
               {products
                 .filter((product: Product) => product.category === "fashion")
                 .slice(0, 4)
-                .reverse()
                 .map((product, index) => (
                   <div
                     key={product.id}
@@ -467,19 +465,21 @@ export default function MegaMartHomePage() {
                     {/* Product Image */}
                     <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 transition-opacity"></div>
-                      <div
-                        className=" absolute inset-0  bg-cover  bg-no-repeat "
-                        style={{
-                          backgroundImage: `url(${product.imageUrl})`,
-                        }}
-                      ></div>
+                      {!loadingFavorite[product.id] && (
+                        <div
+                          className=" absolute inset-0  bg-cover  bg-no-repeat "
+                          style={{
+                            backgroundImage: `url(${product.imageUrl})`,
+                          }}
+                        ></div>
+                      )}
+                      {loadingFavorite[product.id] && <LoadingFavorite />}{" "}
                       {/* Badge */}
                       <div
                         className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
                       >
                         {product.badge ? product.badge : ""}
                       </div>
-
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
@@ -647,19 +647,21 @@ export default function MegaMartHomePage() {
                     {/* Product Image */}
                     <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 transition-opacity"></div>
-                      <div
-                        className=" absolute inset-0  bg-cover  bg-no-repeat "
-                        style={{
-                          backgroundImage: `url(${product.imageUrl})`,
-                        }}
-                      ></div>
+                      {!loadingFavorite[product.id] && (
+                        <div
+                          className=" absolute inset-0  bg-cover  bg-no-repeat "
+                          style={{
+                            backgroundImage: `url(${product.imageUrl})`,
+                          }}
+                        ></div>
+                      )}
+                      {loadingFavorite[product.id] && <LoadingFavorite />}{" "}
                       {/* Badge */}
                       <div
                         className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
                       >
                         {product.badge ? product.badge : ""}
                       </div>
-
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
