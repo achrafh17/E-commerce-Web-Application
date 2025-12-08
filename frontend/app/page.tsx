@@ -15,6 +15,7 @@ import { categories, heroSlides } from "./data/homeData";
 import { Product } from "./types/product";
 import { UserPayload } from "./types/userPayload";
 import { Favorite } from "./types/Favorite";
+import Loading, { LoadingFavorite } from "@/components/loading";
 
 export default function MegaMartHomePage() {
   const pathName = usePathname();
@@ -22,16 +23,20 @@ export default function MegaMartHomePage() {
   const [loading, setloading] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [loadingFavorite, setloadingFavorite] = useState<
+    Record<number, boolean>
+  >({});
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setproducts] = useState<Product[]>([]);
   const [rendering, setRendering] = useState(false);
   const [user, setUser] = useState<UserPayload>();
   const [token, setToken] = useState("");
+
   //--------------extract token-----------------------
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) {
-      console.error("token is null");
+      console.warn("token is null");
       return;
     }
     startTransition(() => setToken(token));
@@ -101,18 +106,21 @@ export default function MegaMartHomePage() {
 
   //----------------toggle favorite--------------------------------------------------------
   const toggleFavorite = (productId: number, isFavorited: boolean) => {
+    setloadingFavorite((prev) => ({ ...prev, [productId]: true }));
     if (isFavorited !== true && isFavorited !== false) {
       console.log("isFavorited null", productId);
+      setloadingFavorite((prev) => ({ ...prev, [productId]: false }));
       return;
     }
     if (!productId) return;
     if (!token) {
       console.log("You need to Sign In first");
+      toast.error("You need to Sign In first");
+      setloadingFavorite((prev) => ({ ...prev, [productId]: false }));
       return;
     }
     const method = isFavorited ? "DELETE" : "POST";
     try {
-      // if the product is not in the favorited list
       fetch(`${API_BASE}/products/favoritedProduct/${productId}`, {
         headers: {
           "Content-Type": "application/json",
@@ -129,23 +137,28 @@ export default function MegaMartHomePage() {
               data.message.toLowerCase()
             )
           ) {
+            setloadingFavorite((prev) => ({ ...prev, [productId]: false }));
             return toast.error("You need to sign In First");
           }
           if (!isFavorited) toast.success("Product added to your favorites");
           else toast.success("Product removed from favorites");
           setRendering((prev) => !prev);
-        });
+        })
+        .finally(() =>
+          setloadingFavorite((prev) => ({ ...prev, [productId]: false }))
+        );
     } catch (error) {
       console.log(error);
       return false;
     }
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Spacer for fixed navbar */}
       <div className="h-20"></div>
-
+      <Loading state={loading} />
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -272,19 +285,21 @@ export default function MegaMartHomePage() {
                     {/* Product Image */}
                     <div className="relative h-66 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 transition-opacity"></div>
-                      <div
-                        className=" absolute inset-0  bg-cover  bg-no-repeat "
-                        style={{
-                          backgroundImage: `url(${product.imageUrl})`,
-                        }}
-                      ></div>
+                      {!loadingFavorite[product.id] && (
+                        <div
+                          className=" absolute inset-0  bg-cover  bg-no-repeat "
+                          style={{
+                            backgroundImage: `url(${product.imageUrl})`,
+                          }}
+                        ></div>
+                      )}
+                      {loadingFavorite[product.id] && <LoadingFavorite />}{" "}
                       {/* Badge */}
                       <div
                         className={`absolute top-4 left-4 bg-gradient-to-r ${product.badgeColor} text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg`}
                       >
                         {product.badge ? product.badge : ""}
                       </div>
-
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
