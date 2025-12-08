@@ -1,22 +1,12 @@
 "use client";
 import React, { useState, useEffect, startTransition } from "react";
-import {
-  ChevronRight,
-  Star,
-  Heart,
-  Eye,
-  ShoppingCart,
-  ArrowRight,
-} from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { usePathname } from "next/navigation";
-import toast from "react-hot-toast";
 import { categories, heroSlides } from "./data/homeData";
 import { Product } from "./types/product";
 import { UserPayload } from "./types/userPayload";
-import { Favorite } from "./types/Favorite";
-import Loading, { LoadingFavorite } from "@/components/loading";
 import CategorySection from "@/components/home/categorySection";
+import Loading from "@/components/loading";
 
 export default function MegaMartHomePage() {
   const pathName = usePathname();
@@ -28,6 +18,7 @@ export default function MegaMartHomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState<UserPayload>();
   const [token, setToken] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
 
   //--------------extract token-----------------------
   useEffect(() => {
@@ -68,6 +59,19 @@ export default function MegaMartHomePage() {
         });
     return () => {};
   }, [API_BASE, token, pathName]);
+  //----------------fetch the products data--------------------
+  useEffect(() => {
+    fetch(`${API_BASE}/products`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("GET PRODUCT", data);
+        setProducts(data);
+      });
+    return () => {};
+  }, [API_BASE, loading, pathName]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -167,42 +171,58 @@ export default function MegaMartHomePage() {
 
       <CategorySection
         Category="electronics"
+        products={products}
+        setProducts={setProducts}
         user={user}
-        loading={loading}
-        pathName={pathName}
         token={token}
       />
       {/* Fashion Products */}
       <CategorySection
         Category="fashion"
+        products={products}
+        setProducts={setProducts}
         user={user}
-        loading={loading}
-        pathName={pathName}
         token={token}
       />
 
       {/* home products */}
       <CategorySection
         Category="home"
+        products={products}
+        setProducts={setProducts}
         user={user}
-        loading={loading}
-        pathName={pathName}
         token={token}
       />
       {/* Sport */}
       <CategorySection
         Category="sport"
+        products={products}
+        setProducts={setProducts}
         user={user}
-        loading={loading}
-        pathName={pathName}
         token={token}
       />
-         {/* Toys */}
+      {/* Toys */}
       <CategorySection
         Category="toys"
+        products={products}
+        setProducts={setProducts}
         user={user}
-        loading={loading}
-        pathName={pathName}
+        token={token}
+      />
+      {/* books */}
+      <CategorySection
+        Category="books"
+        products={products}
+        setProducts={setProducts}
+        user={user}
+        token={token}
+      />
+      {/* office */}
+      <CategorySection
+        Category="office"
+        products={products}
+        setProducts={setProducts}
+        user={user}
         token={token}
       />
       {/* Footer Spacer */}

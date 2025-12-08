@@ -17,43 +17,29 @@ import { categoryHeaders } from "@/app/data/homeData";
 
 export default function CategorySection({
   Category,
+  products,
   user,
-  loading,
-  pathName,
   token,
+  setProducts,
 }: {
   Category: string;
+  products: Product[];
   user?: UserPayload;
-  loading: string;
-  pathName: string;
+
   token: string;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }) {
+  console.log("product from childre", products);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
-  const [products, setproducts] = useState<Product[]>([]);
-  const [filtredProducts, setfiltredProducts] = useState<Product[]>([]);
+
+
   const [loadingFavorite, setloadingFavorite] = useState<
     Record<number, boolean>
   >({});
-  const [rendering, setRendering] = useState(false);
   const [header, setheader] = useState(
     categoryHeaders.find((h) => h.category === Category)
   );
 
-  useEffect(() => {
-    fetch(`${API_BASE}/products`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("GET PRODUCT", data);
-        setfiltredProducts(
-          data.filter((product: Product) => product.category === Category)
-        );
-        setproducts(data);
-      });
-    return () => {};
-  }, [API_BASE, loading, pathName, rendering]);
   //------------------check if a product favorited by a User-------------------------------------
 
   const checkProductFavorited = (productId: number) => {
@@ -106,7 +92,20 @@ export default function CategorySection({
           }
           if (!isFavorited) toast.success("Product added to your favorites");
           else toast.success("Product removed from favorites");
-          setRendering((prev) => !prev);
+          setProducts((prev) =>
+            prev.map((p) =>
+              p.id === productId
+                ? {
+                    ...p,
+                    favoritedBy: isFavorited
+                      ? p.favoritedBy.filter(
+                          (f: Favorite) => f.userId !== user?.id
+                        )
+                      : [...p.favoritedBy, { userId: user?.id }],
+                  }
+                : p
+            )
+          );
         })
         .finally(() =>
           setloadingFavorite((prev) => ({ ...prev, [productId]: false }))
@@ -119,7 +118,7 @@ export default function CategorySection({
 
   //
   return (
-    filtredProducts.length > 0 &&
+    products.filter((product: Product) => product.category === Category).length > 0 &&
     (products && products.length > 0 ? (
       <div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -140,7 +139,7 @@ export default function CategorySection({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filtredProducts.slice(0, 4).map((product, index) => (
+            {products.filter((product: Product) => product.category === Category).slice(0, 4).map((product, index) => (
               <div
                 key={product.id}
                 className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-200 cursor-pointer"
