@@ -200,8 +200,7 @@ export default function MegamartNavbar() {
         .catch((err) => {
           setloadingState("error");
           seterrorForm("Some error occured");
-          sessionStorage.removeItem("token");
-          console.error(err);
+          console.error("error from the navbar token section", err);
         });
     }
   }, [pathName]);

@@ -55,6 +55,64 @@ export const featuredProducts = [
     badgeColor: "from-violet-600 to-indigo-600",
   },
 ];
+export const categoryHeaders = [
+  {
+    category: "electronics",
+    title: "Top Electronics Picks",
+    subtitle: "Discover the latest gadgets just for you",
+  },
+  {
+    category: "fashion",
+    title: "Trending Fashion Picks",
+    subtitle: "Discover the latest styles curated for you",
+  },
+  {
+    category: "beauty",
+    title: "Top Beauty Essentials",
+    subtitle: "Discover the best beauty products handpicked for you",
+  },
+  {
+    category: "home",
+    title: "Top Home Picks",
+    subtitle: "Make your home feel perfect with our curated selection",
+  },
+  {
+    category: "supermarket",
+    title: "Supermarket Best Picks",
+    subtitle: "Daily essentials and top deals just for you",
+  },
+  {
+    category: "appliances",
+    title: "Top Appliance Picks",
+    subtitle: "Upgrade your home with the latest appliances",
+  },
+  {
+    category: "sport",
+    title: "Top Sports Picks",
+    subtitle: "Gear up with the best sports equipment for you",
+  },
+  {
+    category: "automative",
+    title: "Top Automotive Picks",
+    subtitle: "Discover top car accessories and tools for you",
+  },
+  {
+    category: "books",
+    title: "Top Book Picks",
+    subtitle: "Explore the best books specially selected for you",
+  },
+  {
+    category: "toys",
+    title: "Top Toy Picks",
+    subtitle: "Find the best toys and fun items for everyone",
+  },
+  {
+    category: "office",
+    title: "Top Office Picks",
+    subtitle: "Boost your productivity with top office supplies",
+  },
+];
+
 
 // export const features = [
 //   {
