@@ -456,9 +456,9 @@ export default function MegamartNavbar() {
       {errorForm !== "" &&
         (errorForm.toLowerCase().includes("expired") ||
           errorForm.toLowerCase().includes("sign")) &&
-        !pathName.includes("login") && (
+        !pathName.includes("login") &&  !pathName.includes("signup") && (
           <div className=" w-full flex justify-center items-center">
-            <div className="flex items-center max-w-full w-full bg-gradient-to-r from-rose-600 via-pink-600 to-indigo-600 text-white  shadow-xl px-4 py-2 space-x-3">
+            <div className="flex items-center max-w-full w-full bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-600 text-white  shadow-xl px-4 py-2 space-x-3">
               <UserSearch className="w-5 h-5 opacity-90" />
               <div className="flex-1 text-sm font-medium truncate">
                 {errorForm}
@@ -488,7 +488,7 @@ export default function MegamartNavbar() {
             <div
               role="alert"
               aria-live="assertive"
-              className="flex items-center max-w-full w-full bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white shadow-xl px-4 py-2 space-x-3 rounded-md"
+              className="flex items-center max-w-full w-full bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-600 text-white shadow-xl px-4 py-2 space-x-3 rounded-md"
             >
               <UserSearch className="w-5 h-5 opacity-95" />
               <div className="flex-1 text-sm font-medium truncate">
